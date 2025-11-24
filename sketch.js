@@ -87,6 +87,7 @@ class Obstacle {
   }
 }
 
+
 //CHAT - GPT VERSION
 // // Sugar Sugar clone with improved physics and piling sugar in cup.
 // // Draw lines to guide sugar into the cup.
