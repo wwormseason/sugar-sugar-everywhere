@@ -16,12 +16,10 @@ function setup() {
   let o2 = new Obstacle(200, 400, 300, 20);
   obstacles.push(o2);
 
-  strokeWeight(10);
+  background(backgroundColor);
 }
 
 function draw() {
-  background(backgroundColor);
-
   cups.forEach((cup) => {
     fill("white");
     noStroke();
@@ -31,8 +29,8 @@ function draw() {
     fill("white");
     rect(cup.x, cup.y, 30, 40);
     stroke("black");
+    strokeWeight(2);
     text(cup.requiredAmount - cup.filledAmount, cup.x + 4, cup.y + 20);
-    noStroke();
   });
   obstacles.forEach((obstacle) => {
     noStroke();
@@ -42,8 +40,8 @@ function draw() {
 }
 
 function mouseDragged() {
-  let lineHue = mouseX - mouseY;
-  stroke(lineHue, 90, 90);
+  stroke(secondaryColor);
+  strokeWeight(8);
   line(pmouseX, pmouseY, mouseX, mouseY);
 }
 
