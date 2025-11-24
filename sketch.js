@@ -1,23 +1,34 @@
 // oh hey its kevin
 // steven is also here
+let level1 = true;
+let level2 = false,
+  level3 = false,
+  level4 = false,
+  level5 = false;
 let cups = [];
-let backgroundColor = 220;
-let secondaryColor = 170;
+let backgroundColor;
+let secondaryColor;
 let obstacles = [];
+let c1;
+let o1, o2;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  //cups
-  let c1 = new Cup(100, windowWidth / 2, windowHeight - 90);
-  cups.push(c1);
+  if (level1) {
+    //cups
+    c1 = new Cup(100, windowWidth / 2, windowHeight - 90);
+    cups.push(c1);
 
-  //obstacles/platforms
-  let o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
-  obstacles.push(o1);
-  let o2 = new Obstacle(200, 400, 300, 20);
-  obstacles.push(o2);
+    //obstacles/platforms
+    o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
+    obstacles.push(o1);
+    let o2 = new Obstacle(200, 400, 300, 20);
+    obstacles.push(o2);
 
+    backgroundColor = "#DC9D00";
+    secondaryColor = "#ffd366";
+  }
   background(backgroundColor);
 }
 
