@@ -1,8 +1,9 @@
-// oh hey its kevin
 let cups = [];
 let backgroundColor = 220;
 let secondaryColor = 170;
 let obstacles = [];
+let timer = 5;
+let timert = true;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -38,13 +39,29 @@ function draw() {
     fill(secondaryColor);
     rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
   });
+
+   // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
+    if (frameCount % 60 == 0 && timer > 0 && !timert) {
+    timer --;
+  }
+  if (timer == 0) {
+    text('The Sugar is running', 200, 200);
+    textSize(50);
+  }
+
+  fill(0);
+  noStroke();
+  text(timer, width/2, height/2);
 }
 
 function mouseDragged() {
   stroke(secondaryColor);
-  strokeWeight(8);
+  strokeWeight(10);
   line(pmouseX, pmouseY, mouseX, mouseY);
+  timert = false;
 }
+
+
 
 class Cup {
   constructor(requiredAmount, x, y) {
