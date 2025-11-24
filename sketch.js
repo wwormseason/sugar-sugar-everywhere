@@ -1,4 +1,5 @@
 // oh hey its kevin
+// steven is also here
 let cups = [];
 let backgroundColor = 220;
 let secondaryColor = 170;
