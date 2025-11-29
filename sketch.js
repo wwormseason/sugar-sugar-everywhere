@@ -31,12 +31,13 @@ function setup() {
     backgroundColor = "#DC9D00";
     secondaryColor = "#ffd366";
   }
-  background(backgroundColor);
 
   sugar.push(new Sugar(100, 0));
 }
 
 function draw() {
+  background(backgroundColor);
+
   cups.forEach((cup) => {
     fill("white");
     noStroke();
@@ -55,9 +56,9 @@ function draw() {
     rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
   });
 
-  // if (frameCount % 10 === 0) {
-  //   sugar.push(new Sugar(100, 0));
-  // }
+  if (frameCount % 10 === 0) {
+    sugar.push(new Sugar(100, 0));
+  }
 
   for (let i = sugar.length - 1; i >= 0; i--) {
     let s = sugar[i];
@@ -107,19 +108,59 @@ class Sugar {
     this.vx = random(-0.3, 0.3);
     this.vy = random(0, 0.5);
     this.radius = 2;
-    this.fill = random(0, 255);
   }
+
   update() {
-    // Gravity
-    this.vy += 0.12;
-    // Movement
+    // Stronger gravity
+    this.vy += 0.98;
+
+    // More realistic friction
+    this.vx *= 0.995;
+    this.vy *= 0.995;
+
+    // Update position
     this.x += this.vx;
     this.y += this.vy;
+
+    // Ground collision
+    if (this.y > height - this.radius) {
+      this.y = height - this.radius;
+    }
+
+    // Line collision handling
+    for (let l of linesDrawn) {
+      let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
+      if (d < this.radius + 1.5) {
+        // Calculate normal vector of line
+        let dx = l.x2 - l.x1;
+        let dy = l.y2 - l.y1;
+        let len = sqrt(dx * dx + dy * dy);
+        dx /= len;
+        dy /= len;
+
+        // Reflect velocity
+        let dot = this.vx * dx + this.vy * dy;
+        this.vx -= 2 * dot * dx;
+        this.vy -= 2 * dot * dy;
+
+        // Move particle to surface
+        let normX = -dy;
+        let normY = dx;
+        this.x += normX * (this.radius + 1.5 - d);
+        this.y += normY * (this.radius + 1.5 - d);
+      }
+    }
+
+    obstacles.forEach((obstacle) => {
+      if (this.y > obstacle.y - this.radius) {
+        this.y = obstacle.y - this.radius;
+      }
+    });
   }
 
   show() {
-    fill(this.fill);
-    square(this.x, this.y, 5);
+    fill("white");
+    square(this.x, this.y, this.radius * 2);
   }
 }
 
