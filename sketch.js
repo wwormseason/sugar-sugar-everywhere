@@ -9,6 +9,8 @@ let cups = [];
 let backgroundColor;
 let secondaryColor;
 let obstacles = [];
+let linesDrawn = [];
+let sugar = [];
 let c1;
 let o1, o2;
 
@@ -30,6 +32,8 @@ function setup() {
     secondaryColor = "#ffd366";
   }
   background(backgroundColor);
+
+  sugar.push(new Sugar(100, 0));
 }
 
 function draw() {
@@ -50,13 +54,29 @@ function draw() {
     fill(secondaryColor);
     rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
   });
-}
 
-function mouseDragged() {
+  // if (frameCount % 10 === 0) {
+  //   sugar.push(new Sugar(100, 0));
+  // }
+
+  for (let i = sugar.length - 1; i >= 0; i--) {
+    let s = sugar[i];
+    s.update();
+    s.show();
+  }
+
   stroke(secondaryColor);
   strokeWeight(8);
-  line(pmouseX, pmouseY, mouseX, mouseY);
+  for (let l of linesDrawn) {
+    line(l.x1, l.y1, l.x2, l.y2);
+  }
 }
+
+// function mouseDragged() {
+//   stroke(secondaryColor);
+//   strokeWeight(8);
+//   line(pmouseX, pmouseY, mouseX, mouseY);
+// }
 
 class Cup {
   constructor(requiredAmount, x, y) {
@@ -78,4 +98,56 @@ class Obstacle {
     this.width = width;
     this.height = height;
   }
+}
+
+class Sugar {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.vx = random(-0.3, 0.3);
+    this.vy = random(0, 0.5);
+    this.radius = 2;
+    this.fill = random(0, 255);
+  }
+  update() {
+    // Gravity
+    this.vy += 0.12;
+    // Movement
+    this.x += this.vx;
+    this.y += this.vy;
+  }
+
+  show() {
+    fill(this.fill);
+    square(this.x, this.y, 5);
+  }
+}
+
+// Draw lines with mouse
+function mouseDragged() {
+  linesDrawn.push({ x1: pmouseX, y1: pmouseY, x2: mouseX, y2: mouseY });
+}
+// Distance between point and line segment
+function distToSegment(px, py, x1, y1, x2, y2) {
+  let A = px - x1;
+  let B = py - y1;
+  let C = x2 - x1;
+  let D = y2 - y1;
+  let dot = A * C + B * D;
+  let lenSq = C * C + D * D;
+  let param = lenSq !== 0 ? dot / lenSq : -1;
+  let xx, yy;
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  } else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  } else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+  let dx = px - xx;
+  let dy = py - yy;
+  return sqrt(dx * dx + dy * dy);
 }
