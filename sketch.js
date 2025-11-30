@@ -25,7 +25,7 @@ function setup() {
     //obstacles/platforms
     o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
     obstacles.push(o1);
-    let o2 = new Obstacle(200, 400, 300, 20);
+    let o2 = new Obstacle(50, 400, 300, 20);
     obstacles.push(o2);
 
     backgroundColor = "#DC9D00";
@@ -73,12 +73,6 @@ function draw() {
   }
 }
 
-// function mouseDragged() {
-//   stroke(secondaryColor);
-//   strokeWeight(8);
-//   line(pmouseX, pmouseY, mouseX, mouseY);
-// }
-
 class Cup {
   constructor(requiredAmount, x, y) {
     this.requiredAmount = requiredAmount;
@@ -111,18 +105,11 @@ class Sugar {
   }
 
   update() {
-    // Stronger gravity
+    //gravity
     this.vy += 0.98;
 
-    // More realistic friction
-    this.vx *= 0.995;
-    this.vy *= 0.995;
-
-    // Update position
     this.x += this.vx;
     this.y += this.vy;
-
-    // Ground collision
     if (this.y > height - this.radius) {
       this.y = height - this.radius;
     }
@@ -152,7 +139,11 @@ class Sugar {
     }
 
     obstacles.forEach((obstacle) => {
-      if (this.y > obstacle.y - this.radius) {
+      if (
+        this.y > obstacle.y - this.radius &&
+        this.x < obstacle.x + obstacle.width &&
+        this.x > obstacle.x
+      ) {
         this.y = obstacle.y - this.radius;
       }
     });
