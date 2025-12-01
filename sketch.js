@@ -31,6 +31,8 @@ function setup() {
 
     backgroundColor = "#DC9D00";
     secondaryColor = "#ffd366";
+
+    //sugar.push(new Sugar(200, 0));
   }
 }
 
@@ -129,9 +131,9 @@ class Sugar {
 
     this.x += this.vx;
     this.y += this.vy;
-    if (this.y > height - this.radius) {
+    if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
-      this.vx = random(-0.3, 0.3);
+      this.vx = random(-0.5, 0.5);
       this.vy = 0.2;
     }
 
@@ -165,9 +167,10 @@ class Sugar {
 
     obstacles.forEach((obstacle) => {
       if (
-        this.y > obstacle.y &&
+        this.x > obstacle.x &&
         this.x < obstacle.x + obstacle.width &&
-        this.x > obstacle.x
+        this.y > obstacle.y - this.radius &&
+        this.y < obstacle.y + obstacle.height + this.vy
       ) {
         this.y = obstacle.y - this.radius;
       }
@@ -178,7 +181,7 @@ class Sugar {
         this.x > cup.x &&
         this.x < cup.x + 30 &&
         this.y > cup.y &&
-        this.y < cup.y + 40
+        this.y < cup.y + 20
       ) {
         cup.fill();
         this.inCup = true;
