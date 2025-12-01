@@ -137,6 +137,34 @@ class Sugar {
       this.vy = 0.2;
     }
 
+    // Line collision handling
+    for (let l of linesDrawn) {
+      let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
+      if (d < this.radius + 1.5) {
+        // Calculate normal vector of line
+        let dx = l.x2 - l.x1;
+        let dy = l.y2 - l.y1;
+        let len = sqrt(dx * dx + dy * dy);
+        dx /= len;
+        dy /= len;
+
+        // Project velocity onto the line direction (slide along line)
+        let dot = this.vx * dx + this.vy * dy;
+        this.vx = dx * dot;
+        this.vy = dy * dot;
+
+        // Stick particle to the line surface
+        let normX = dy;
+        let normY = -dx;
+        this.x += normX * (this.radius + 1.5 - d);
+        this.y += normY * (this.radius + 1.5 - d);
+
+        // Add gravity along line direction
+        this.vx += dx * 0.05;
+        this.vy += dy * 0.05;
+      }
+    }
+
     obstacles.forEach((obstacle) => {
       if (
         this.x > obstacle.x &&
@@ -163,7 +191,7 @@ class Sugar {
 
   show() {
     fill("white");
-    square(this.x, this.y, this.radius * 2);
+    circle(this.x, this.y, this.radius * 2);
   }
 }
 
