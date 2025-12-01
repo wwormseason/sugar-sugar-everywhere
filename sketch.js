@@ -1,29 +1,45 @@
-//Particle
-
+// oh hey its kevin
+// steven is also here
+let level1 = true;
+let level2 = false,
+  level3 = false,
+  level4 = false,
+  level5 = false;
 let cups = [];
-let backgroundColor = 220;
-let secondaryColor = 170;
+let backgroundColor;
+let secondaryColor;
 let obstacles = [];
+let linesDrawn = [];
+let sugar = [];
+let c1;
+let o1, o2;
 let timer = 5;
 let timert = true;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  //cups
-  let c1 = new Cup(100, windowWidth / 2, windowHeight - 90);
-  cups.push(c1);
+  if (level1) {
+    //cups
+    c1 = new Cup(100, windowWidth / 2, windowHeight - 90);
+    cups.push(c1);
 
-  //obstacles/platforms
-  let o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
-  obstacles.push(o1);
-  let o2 = new Obstacle(200, 400, 300, 20);
-  obstacles.push(o2);
+    //obstacles/platforms
+    o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
+    obstacles.push(o1);
+    let o2 = new Obstacle(50, 400, 300, 20);
+    obstacles.push(o2);
 
-  background(backgroundColor);
+    backgroundColor = "#DC9D00";
+    secondaryColor = "#ffd366";
+  }
+
+  sugar.push(new Sugar(100, 0));
 }
 
 function draw() {
+  background(backgroundColor);
+
   cups.forEach((cup) => {
     fill("white");
     noStroke();
@@ -56,11 +72,21 @@ function draw() {
   text(timer, width / 2, height / 2);
 }
 
-function mouseDragged() {
+  if (frameCount % 10 === 0) {
+    sugar.push(new Sugar(100, 0));
+  }
+
+  for (let i = sugar.length - 1; i >= 0; i--) {
+    let s = sugar[i];
+    s.update();
+    s.show();
+  }
+
   stroke(secondaryColor);
-  strokeWeight(10);
-  line(pmouseX, pmouseY, mouseX, mouseY);
-  timert = false;
+  strokeWeight(8);
+  for (let l of linesDrawn) {
+    line(l.x1, l.y1, l.x2, l.y2);
+  }
 }
 
 class Cup {
@@ -85,148 +111,91 @@ class Obstacle {
   }
 }
 
-//CHAT - GPT VERSION
-// // Sugar Sugar clone with improved physics and piling sugar in cup.
-// // Draw lines to guide sugar into the cup.
-// // Left-click & drag to draw.
+class Sugar {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.vx = random(-0.3, 0.3);
+    this.vy = random(0, 0.5);
+    this.radius = 2;
+  }
 
-// let sugar = [];
-// let linesDrawn = [];
-// let cup;
-// let sugarNeeded = 200;  // goal amount
-// let collected = 0;
+  update() {
+    //gravity
+    this.vy += 0.98;
 
-// function setup() {
-//   createCanvas(800, 600);
-//   cup = { x: 560, y: 450, w: 160, h: 120 };
-// }
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.y > height - this.radius) {
+      this.y = height - this.radius;
+    }
 
-// function draw() {
-//   background(245);
+    // Line collision handling
+    for (let l of linesDrawn) {
+      let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
+      if (d < this.radius + 1.5) {
+        // Calculate normal vector of line
+        let dx = l.x2 - l.x1;
+        let dy = l.y2 - l.y1;
+        let len = sqrt(dx * dx + dy * dy);
+        dx /= len;
+        dy /= len;
 
-//   // Draw cup
-//   noStroke();
-//   fill(255, 180, 0);
-//   rect(cup.x, cup.y, cup.w, cup.h, 15);
+        // Reflect velocity
+        let dot = this.vx * dx + this.vy * dy;
+        this.vx -= 2 * dot * dx;
+        this.vy -= 2 * dot * dy;
 
-//   fill(0);
-//   textSize(22);
-//   text(`Cup: ${collected}/${sugarNeeded}`, cup.x + 25, cup.y + 60);
+        // Move particle to surface
+        let normX = -dy;
+        let normY = dx;
+        this.x += normX * (this.radius + 1.5 - d);
+        this.y += normY * (this.radius + 1.5 - d);
+      }
+    }
 
-//   // Draw user lines
-//   stroke(50);
-//   strokeWeight(3);
-//   for (let l of linesDrawn) {
-//     line(l.x1, l.y1, l.x2, l.y2);
-//   }
+    obstacles.forEach((obstacle) => {
+      if (
+        this.y > obstacle.y - this.radius &&
+        this.x < obstacle.x + obstacle.width &&
+        this.x > obstacle.x
+      ) {
+        this.y = obstacle.y - this.radius;
+      }
+    });
+  }
 
-//   // Spawn sugar continuously
-//   if (frameCount % 2 === 0 && sugar.length < 1500) {
-//     sugar.push(new Grain(random(width), 0));
-//   }
+  show() {
+    fill("white");
+    square(this.x, this.y, this.radius * 2);
+  }
+}
 
-//   // Update and show grains
-//   for (let i = sugar.length - 1; i >= 0; i--) {
-//     let g = sugar[i];
-
-//     g.update();
-//     g.show();
-
-//     // Check cup
-//     if (
-//       g.x > cup.x &&
-//       g.x < cup.x + cup.w &&
-//       g.y > cup.y &&
-//       g.y < cup.y + cup.h
-//     ) {
-//       collected++;
-//       sugar.splice(i, 1); // remove grain
-//     }
-//   }
-
-//   if (collected >= sugarNeeded) {
-//     fill(0, 255, 0);
-//     textSize(48);
-//     text("LEVEL COMPLETE!", width / 2 - 200, height / 2);
-//     noLoop();
-//   }
-// }
-
-// class Grain {
-//   constructor(x, y) {
-//     this.x = x;
-//     this.y = y;
-//     this.vx = random(-0.3, 0.3);
-//     this.vy = random(0, 0.5);
-//     this.radius = 2;
-//   }
-
-//   update() {
-//     // Gravity
-//     this.vy += 0.12;
-
-//     // Movement
-//     this.x += this.vx;
-//     this.y += this.vy;
-
-//     // Slight friction
-//     this.vx *= 0.995;
-//     this.vy *= 0.995;
-
-//     // Bounce off floor
-//     if (this.y > height - this.radius) {
-//       this.y = height - this.radius;
-//       this.vy *= -0.3;
-//     }
-
-//     // Bounce off drawn lines
-//     for (let l of linesDrawn) {
-//       let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
-//       if (d < this.radius + 1.5) {
-//         let angle = atan2(l.y2 - l.y1, l.x2 - l.x1);
-//         let speed = sqrt(this.vx * this.vx + this.vy * this.vy);
-//         this.vx = -speed * cos(angle);
-//         this.vy = -speed * sin(angle);
-//       }
-//     }
-//   }
-
-//   show() {
-//     stroke(255);
-//     strokeWeight(this.radius);
-//     point(this.x, this.y);
-//   }
-// }
-
-// // Draw lines with mouse
-// function mouseDragged() {
-//   linesDrawn.push({ x1: pmouseX, y1: pmouseY, x2: mouseX, y2: mouseY });
-// }
-
-// // Distance between point and line segment
-// function distToSegment(px, py, x1, y1, x2, y2) {
-//   let A = px - x1;
-//   let B = py - y1;
-//   let C = x2 - x1;
-//   let D = y2 - y1;
-
-//   let dot = A * C + B * D;
-//   let lenSq = C * C + D * D;
-//   let param = lenSq !== 0 ? dot / lenSq : -1;
-
-//   let xx, yy;
-//   if (param < 0) {
-//     xx = x1;
-//     yy = y1;
-//   } else if (param > 1) {
-//     xx = x2;
-//     yy = y2;
-//   } else {
-//     xx = x1 + param * C;
-//     yy = y1 + param * D;
-//   }
-
-//   let dx = px - xx;
-//   let dy = py - yy;
-//   return sqrt(dx * dx + dy * dy);
-// }
+// Draw lines with mouse
+function mouseDragged() {
+  linesDrawn.push({ x1: pmouseX, y1: pmouseY, x2: mouseX, y2: mouseY });
+}
+// Distance between point and line segment
+function distToSegment(px, py, x1, y1, x2, y2) {
+  let A = px - x1;
+  let B = py - y1;
+  let C = x2 - x1;
+  let D = y2 - y1;
+  let dot = A * C + B * D;
+  let lenSq = C * C + D * D;
+  let param = lenSq !== 0 ? dot / lenSq : -1;
+  let xx, yy;
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  } else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  } else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+  let dx = px - xx;
+  let dy = py - yy;
+  return sqrt(dx * dx + dy * dy);
+}
