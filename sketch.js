@@ -13,6 +13,8 @@ let linesDrawn = [];
 let sugar = [];
 let c1;
 let o1, o2;
+let timer = 5;
+let timert = true;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -55,6 +57,20 @@ function draw() {
     fill(secondaryColor);
     rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
   });
+
+  // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
+  if (frameCount % 60 == 0 && timer > 0) {
+    timer--;
+  }
+  if (timer == 0) {
+    text("The Sugar is running", 200, 200);
+    textSize(50);
+  }
+
+  fill(0);
+  noStroke();
+  text(timer, width / 2, height / 2);
+}
 
   if (frameCount % 10 === 0) {
     sugar.push(new Sugar(100, 0));
