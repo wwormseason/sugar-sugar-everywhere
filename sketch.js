@@ -13,8 +13,7 @@ let linesDrawn = [];
 let sugar = [];
 let c1;
 let o1, o2;
-let timer = 5;
-let timert = true;
+let win = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -33,12 +32,30 @@ function setup() {
     backgroundColor = "#DC9D00";
     secondaryColor = "#ffd366";
   }
-
-  sugar.push(new Sugar(100, 0));
 }
 
 function draw() {
   background(backgroundColor);
+
+  obstacles.forEach((obstacle) => {
+    noStroke();
+    fill(secondaryColor);
+    rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+  });
+
+  strokeWeight(0);
+  if (frameCount % 10 === 0) {
+    sugar.push(new Sugar(400, 0));
+  }
+
+  for (let i = sugar.length - 1; i >= 0; i--) {
+    let s = sugar[i];
+    s.update();
+    s.show();
+    if (s.inCup) {
+      sugar.splice(i, 1);
+    }
+  }
 
   cups.forEach((cup) => {
     fill("white");
@@ -51,41 +68,24 @@ function draw() {
     stroke("black");
     strokeWeight(2);
     text(cup.requiredAmount - cup.filledAmount, cup.x + 4, cup.y + 20);
+
+    if (cup.filledAmount - cup.requiredAmount == 0) {
+      win = true;
+    }
   });
-  obstacles.forEach((obstacle) => {
-    noStroke();
-    fill(secondaryColor);
-    rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-  });
-
-  // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
-  if (frameCount % 60 == 0 && timer > 0) {
-    timer--;
-  }
-  if (timer == 0) {
-    text("The Sugar is running", 200, 200);
-    textSize(50);
-  }
-
-  fill(0);
-  noStroke();
-  text(timer, width / 2, height / 2);
-}
-
-  if (frameCount % 10 === 0) {
-    sugar.push(new Sugar(100, 0));
-  }
-
-  for (let i = sugar.length - 1; i >= 0; i--) {
-    let s = sugar[i];
-    s.update();
-    s.show();
-  }
 
   stroke(secondaryColor);
   strokeWeight(8);
   for (let l of linesDrawn) {
     line(l.x1, l.y1, l.x2, l.y2);
+  }
+
+  if (win) {
+    text("you win", 0, 0);
+    if (level1) {
+      level1 = false;
+      level2 = true;
+    }
   }
 }
 
@@ -98,7 +98,9 @@ class Cup {
   }
 
   fill() {
-    this.filledAmount++;
+    if (this.filledAmount < this.requiredAmount) {
+      this.filledAmount++;
+    }
   }
 }
 
@@ -116,18 +118,21 @@ class Sugar {
     this.x = x;
     this.y = y;
     this.vx = random(-0.3, 0.3);
-    this.vy = random(0, 0.5);
+    this.vy = 0.2;
     this.radius = 2;
+    this.inCup = false;
   }
 
   update() {
     //gravity
-    this.vy += 0.98;
+    this.vy += 0.2;
 
     this.x += this.vx;
     this.y += this.vy;
     if (this.y > height - this.radius) {
-      this.y = height - this.radius;
+      this.y = 0 - this.radius;
+      this.vx = random(-0.3, 0.3);
+      this.vy = 0.2;
     }
 
     // Line collision handling
@@ -156,11 +161,23 @@ class Sugar {
 
     obstacles.forEach((obstacle) => {
       if (
-        this.y > obstacle.y - this.radius &&
+        this.y > obstacle.y &&
         this.x < obstacle.x + obstacle.width &&
         this.x > obstacle.x
       ) {
         this.y = obstacle.y - this.radius;
+      }
+    });
+
+    cups.forEach((cup) => {
+      if (
+        this.x > cup.x &&
+        this.x < cup.x + 30 &&
+        this.y > cup.y &&
+        this.y < cup.y + 40
+      ) {
+        cup.fill();
+        this.inCup = true;
       }
     });
   }
