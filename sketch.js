@@ -42,18 +42,18 @@ function draw() {
     rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
   });
 
-   // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
-    if (frameCount % 60 == 0 && timer > 0 && !timert) {
-    timer --;
+  // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
+  if (frameCount % 60 == 0 && timer > 0) {
+    timer--;
   }
   if (timer == 0) {
-    text('The Sugar is running', 200, 200);
+    text("The Sugar is running", 200, 200);
     textSize(50);
   }
 
   fill(0);
   noStroke();
-  text(timer, width/2, height/2);
+  text(timer, width / 2, height / 2);
 }
 
 function mouseDragged() {
@@ -62,8 +62,6 @@ function mouseDragged() {
   line(pmouseX, pmouseY, mouseX, mouseY);
   timert = false;
 }
-
-
 
 class Cup {
   constructor(requiredAmount, x, y) {
@@ -86,7 +84,6 @@ class Obstacle {
     this.height = height;
   }
 }
-
 
 //CHAT - GPT VERSION
 // // Sugar Sugar clone with improved physics and piling sugar in cup.
