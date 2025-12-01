@@ -50,6 +50,7 @@ function setup() {
     backgroundColor = "#3E5F8A";
     secondaryColor = "#74a5e7ff";
 
+    sugar.length = 0;
     //sugar.push(new Sugar(200, 0));
   }
 }
