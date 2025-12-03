@@ -1,3 +1,4 @@
+let pcounter = 0;
 let counter = 0;
 let win = false;
 
@@ -75,7 +76,7 @@ class Sugar {
         let normX = dy;
         let normY = -dx;
         this.x += normX * (this.radius + 1.5 - d);
-        this.y += normY * (this.radius + 1.5 - d);
+        this.y += normY * (this.radius + 1.5 - d) - this.radius * 2;
 
         // Add gravity along line direction
         this.vx += dx * 0.05;
@@ -241,6 +242,10 @@ function mouseClicked() {
         cup.filledAmount = 0;
       });
     }
+    if (mouseX > 675 && mouseX < 850 && mouseY > 590 && mouseY < 620) {
+      counter++;
+      win = false;
+    }
   }
 }
 
@@ -340,10 +345,13 @@ function draw() {
   }
 
   if (win) {
-    game[counter].texts.push(
-      new Text("You Finished This Level!", 1535 / 2, 100)
-    );
-    counter++;
+    textSize(32);
+    fill(150, 200);
+    rect(0, 0, width, height);
+    fill("black");
+    text("You Finished This Level!", 1535 / 2, 300);
+    text("Continue", 1535 / 2, 600);
+    textSize(15);
   }
 
   if (counter == 0) {
