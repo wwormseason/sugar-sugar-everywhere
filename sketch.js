@@ -196,6 +196,7 @@ let game = {
     lines: [],
     sugar: [],
     sugarPosition: 200,
+    texts: [],
     bgColor: "#DC9D00",
     fgColor: "#ffd366",
   },
@@ -208,6 +209,7 @@ let game = {
     lines: [],
     sugar: [],
     sugarPosition: 600,
+    texts: [],
     bgColor: "#3E5F8A",
     fgColor: "#74a5e7ff",
   },
@@ -319,7 +321,7 @@ function draw() {
 
   if (win) {
     game[counter].texts.push(
-      new Text("You Finished This Level!", width / 2, 100)
+      new Text("You Finished This Level!", 1535 / 2, 100)
     );
     counter++;
   }
