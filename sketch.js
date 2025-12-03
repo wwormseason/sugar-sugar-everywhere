@@ -52,6 +52,9 @@ function setup() {
 
     sugar.length = 0;
     //sugar.push(new Sugar(200, 0));
+
+    linesDrawn.length = 0;
+    win = false;
   }
 }
 
@@ -211,11 +214,35 @@ class Sugar {
 
   show() {
     fill("white");
-    circle(this.x, this.y, this.radius * 2);
+    square(this.x, this.y, this.radius * 2);
   }
 }
 
 // Draw lines with mouse
 function mouseDragged() {
   linesDrawn.push({ x1: pmouseX, y1: pmouseY, x2: mouseX, y2: mouseY });
+}
+
+function distToSegment(px, py, x1, y1, x2, y2) {
+  let A = px - x1;
+  let B = py - y1;
+  let C = x2 - x1;
+  let D = y2 - y1;
+  let dot = A * C + B * D;
+  let lenSq = C * C + D * D;
+  let param = lenSq !== 0 ? dot / lenSq : -1;
+  let xx, yy;
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  } else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  } else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+  let dx = px - xx;
+  let dy = py - yy;
+  return sqrt(dx * dx + dy * dy);
 }
