@@ -23,7 +23,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1535, 790);
   textFont(font);
   textSize(15);
   if (start) {
@@ -43,16 +43,17 @@ function setup() {
   }
 
   if (level1) {
-    //cups
     sugar.length = 0;
-    c1 = new Cup(100, windowWidth / 2, windowHeight - 90);
+    linesDrawn.length = 0;
+    //cups
+    c1 = new Cup(100, width / 2, height - 90);
     cups.push(c1);
 
     //obstacles/platforms
     o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
     obstacles.push(o1);
-    let o2 = new Obstacle(50, 400, 300, 20);
-    obstacles.push(o2);
+    // let o2 = new Obstacle(50, 400, 300, 20);
+    // obstacles.push(o2);
 
     backgroundColor = "#DC9D00";
     secondaryColor = "#ffd366";
@@ -97,6 +98,9 @@ function draw() {
     if (level1) {
       sugar.push(new Sugar(200, 0));
     }
+    if (level2) {
+      sugar.push(new Sugar(600, 0));
+    }
   }
 
   for (let i = sugar.length - 1; i >= 0; i--) {
@@ -132,7 +136,7 @@ function draw() {
   }
 
   if (win) {
-    text("you win", 0, 0);
+    texts.push(new Text("You Finished This Level!", width / 2, 100));
     if (level1) {
       level1 = false;
       level2 = true;
@@ -149,6 +153,8 @@ function draw() {
     });
     fill(backgroundColor);
   }
+
+  text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
 
 class Cup {
