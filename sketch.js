@@ -1,7 +1,7 @@
 // oh hey its kevin
 // steven is also here
-let level1 = true;
-let level2 = false,
+let level1 = false,
+  level2 = false,
   level3 = false,
   level4 = false,
   level5 = false;
@@ -14,13 +14,38 @@ let sugar = [];
 let c1;
 let o1, o2;
 let win = false;
+let start = true;
+let font;
+let texts = [];
+
+function preload() {
+  font = loadFont("./assets/Monocraft-01.ttf");
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  textFont(font);
+  textSize(15);
+  if (start) {
+    backgroundColor = "#3D642D";
+    secondaryColor = "#72ab5cff";
+    textAlign(CENTER, CENTER);
+    textSize(32);
+    let text1 = new Text(
+      "Our Knockoff of Sugar Sugar Everywhere",
+      width / 2,
+      50
+    );
+
+    texts.push(text1);
+    let text2 = new Text("Start", width / 2, 600);
+    texts.push(text2);
+  }
 
   if (level1) {
     //cups
-    c1 = new Cup(5, windowWidth / 2, windowHeight - 90);
+    sugar.length = 0;
+    c1 = new Cup(100, windowWidth / 2, windowHeight - 90);
     cups.push(c1);
 
     //obstacles/platforms
@@ -31,8 +56,6 @@ function setup() {
 
     backgroundColor = "#DC9D00";
     secondaryColor = "#ffd366";
-
-    //sugar.push(new Sugar(200, 0));
   }
 
   if (level2) {
@@ -51,7 +74,6 @@ function setup() {
     secondaryColor = "#74a5e7ff";
 
     sugar.length = 0;
-    //sugar.push(new Sugar(200, 0));
 
     linesDrawn.length = 0;
     win = false;
@@ -69,7 +91,12 @@ function draw() {
 
   strokeWeight(0);
   if (frameCount % 10 === 0) {
-    sugar.push(new Sugar(400, 0));
+    if (start) {
+      sugar.push(new Sugar(width / 2, 0));
+    }
+    if (level1) {
+      sugar.push(new Sugar(200, 0));
+    }
   }
 
   for (let i = sugar.length - 1; i >= 0; i--) {
@@ -91,7 +118,7 @@ function draw() {
     rect(cup.x, cup.y, 30, 40);
     stroke("black");
     strokeWeight(2);
-    text(cup.requiredAmount - cup.filledAmount, cup.x + 4, cup.y + 20);
+    text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
 
     if (cup.filledAmount - cup.requiredAmount == 0) {
       win = true;
@@ -111,6 +138,16 @@ function draw() {
       level2 = true;
       setup();
     }
+  }
+
+  if (start) {
+    strokeWeight(5);
+    stroke(secondaryColor);
+    fill("black");
+    texts.forEach((t) => {
+      text(t.text, t.x, t.y);
+    });
+    fill(backgroundColor);
   }
 }
 
@@ -142,22 +179,22 @@ class Sugar {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vx = random(-0.3, 0.3);
-    this.vy = 0.2;
+    this.vx = random(-0.1, 0.1);
+    this.vy = 0.1;
     this.radius = 2;
     this.inCup = false;
   }
 
   update() {
     //gravity
-    this.vy += 0.2;
+    this.vy += 0.1;
 
     this.x += this.vx;
     this.y += this.vy;
     if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
-      this.vx = random(-0.5, 0.5);
-      this.vy = 0.2;
+      this.vx = random(-0.1, 0.1);
+      this.vy = 0.1;
     }
 
     // Line collision handling
@@ -210,6 +247,69 @@ class Sugar {
         this.inCup = true;
       }
     });
+    if (start) {
+      // O in our
+      if (this.x > 360 && this.x < 380 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // ur in Our
+      } else if (this.x > 380 && this.x < 420 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // K in Knockoff
+      } else if (this.x > 445 && this.x < 470 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // noc in Knockoff
+      } else if (this.x > 470 && this.x < 530 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // k in Knockoff
+      } else if (this.x > 530 && this.x < 550 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // o in Knockoff
+      } else if (this.x > 550 && this.x < 575 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // ff in Knockoff
+      } else if (this.x > 575 && this.x < 615 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // o in of
+      } else if (this.x > 640 && this.x < 660 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // f in of
+      } else if (this.x > 660 && this.x < 680 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // S in Sugar
+      } else if (this.x > 700 && this.x < 720 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // ugar in Sugar
+      } else if (this.x > 720 && this.x < 800 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // S in Sugar (2)
+      } else if (this.x > 830 && this.x < 850 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // ugar in Sugar (2)
+      } else if (this.x > 850 && this.x < 940 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // E in Everywhere
+      } else if (this.x > 955 && this.x < 980 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // veryw in Everywhere
+      } else if (this.x > 980 && this.x < 1085 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // h in Everywhere
+      } else if (this.x > 1085 && this.x < 1095 && this.y > 40 && this.y < 70) {
+        this.y = 40 - this.radius;
+        // here in Everywhere
+      } else if (this.x > 1095 && this.x < 1175 && this.y > 45 && this.y < 70) {
+        this.y = 45 - this.radius;
+        // St in Start
+      } else if (this.x > 710 && this.x < 745 && this.y > 590 && this.y < 620) {
+        this.y = 590 - this.radius;
+        // tart in Start
+      } else if (this.x > 745 && this.x < 800 && this.y > 595 && this.y < 620) {
+        this.y = 595 - this.radius;
+        // t in Start
+      } else if (this.x > 800 && this.x < 810 && this.y > 590 && this.y < 620) {
+        this.y = 590 - this.radius;
+      }
+    }
   }
 
   show() {
@@ -218,11 +318,30 @@ class Sugar {
   }
 }
 
+class Text {
+  constructor(text, x, y) {
+    this.text = text;
+    this.x = x;
+    this.y = y;
+  }
+}
+
+// start game button
+function mouseClicked() {
+  if (start) {
+    if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
+      start = false;
+      level1 = true;
+      setup();
+    }
+  }
+}
+
 // Draw lines with mouse
 function mouseDragged() {
   linesDrawn.push({ x1: pmouseX, y1: pmouseY, x2: mouseX, y2: mouseY });
 }
-
+// Distance between point and line segment
 function distToSegment(px, py, x1, y1, x2, y2) {
   let A = px - x1;
   let B = py - y1;
