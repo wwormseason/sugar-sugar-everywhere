@@ -1,161 +1,5 @@
-// oh hey its kevin
-// steven is also here
-let level1 = false,
-  level2 = false,
-  level3 = false,
-  level4 = false,
-  level5 = false;
-let cups = [];
-let backgroundColor;
-let secondaryColor;
-let obstacles = [];
-let linesDrawn = [];
-let sugar = [];
-let c1;
-let o1, o2;
+let counter = 0;
 let win = false;
-let start = true;
-let font;
-let texts = [];
-
-function preload() {
-  font = loadFont("./assets/Monocraft-01.ttf");
-}
-
-function setup() {
-  createCanvas(1535, 790);
-  textFont(font);
-  textSize(15);
-  if (start) {
-    backgroundColor = "#3D642D";
-    secondaryColor = "#72ab5cff";
-    textAlign(CENTER, CENTER);
-    textSize(32);
-    let text1 = new Text(
-      "Our Knockoff of Sugar Sugar Everywhere",
-      width / 2,
-      50
-    );
-
-    texts.push(text1);
-    let text2 = new Text("Start", width / 2, 600);
-    texts.push(text2);
-  }
-
-  if (level1) {
-    sugar.length = 0;
-    linesDrawn.length = 0;
-    //cups
-    c1 = new Cup(100, width / 2, height - 90);
-    cups.push(c1);
-
-    //obstacles/platforms
-    o1 = new Obstacle(windowWidth / 4, windowHeight - 50, 600, 20);
-    obstacles.push(o1);
-    // let o2 = new Obstacle(50, 400, 300, 20);
-    // obstacles.push(o2);
-
-    backgroundColor = "#DC9D00";
-    secondaryColor = "#ffd366";
-  }
-
-  if (level2) {
-    cups.length = 0;
-    c1 = new Cup(100, 300, 560);
-    cups.push(c1);
-
-    //obstacles/platforms
-    obstacles.length = 0;
-    o1 = new Obstacle(100, 600, 600, 20);
-    obstacles.push(o1);
-    let o2 = new Obstacle(500, 300, 900, 20);
-    obstacles.push(o2);
-
-    backgroundColor = "#3E5F8A";
-    secondaryColor = "#74a5e7ff";
-
-    sugar.length = 0;
-
-    linesDrawn.length = 0;
-    win = false;
-  }
-}
-
-function draw() {
-  background(backgroundColor);
-
-  obstacles.forEach((obstacle) => {
-    noStroke();
-    fill(secondaryColor);
-    rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-  });
-
-  strokeWeight(0);
-  if (frameCount % 10 === 0) {
-    if (start) {
-      sugar.push(new Sugar(width / 2, 0));
-    }
-    if (level1) {
-      sugar.push(new Sugar(200, 0));
-    }
-    if (level2) {
-      sugar.push(new Sugar(600, 0));
-    }
-  }
-
-  for (let i = sugar.length - 1; i >= 0; i--) {
-    let s = sugar[i];
-    s.update();
-    s.show();
-    if (s.inCup) {
-      sugar.splice(i, 1);
-    }
-  }
-
-  cups.forEach((cup) => {
-    fill("white");
-    noStroke();
-    ellipse(cup.x, cup.y + 20, 30, 25);
-    fill(backgroundColor);
-    ellipse(cup.x, cup.y + 20, 18, 13);
-    fill("white");
-    rect(cup.x, cup.y, 30, 40);
-    stroke("black");
-    strokeWeight(2);
-    text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
-
-    if (cup.filledAmount - cup.requiredAmount == 0) {
-      win = true;
-    }
-  });
-
-  stroke(secondaryColor);
-  strokeWeight(8);
-  for (let l of linesDrawn) {
-    line(l.x1, l.y1, l.x2, l.y2);
-  }
-
-  if (win) {
-    texts.push(new Text("You Finished This Level!", width / 2, 100));
-    if (level1) {
-      level1 = false;
-      level2 = true;
-      setup();
-    }
-  }
-
-  if (start) {
-    strokeWeight(5);
-    stroke(secondaryColor);
-    fill("black");
-    texts.forEach((t) => {
-      text(t.text, t.x, t.y);
-    });
-    fill(backgroundColor);
-  }
-
-  text(`${pmouseX}, ${pmouseY}`, 100, 100);
-}
 
 class Cup {
   constructor(requiredAmount, x, y) {
@@ -204,7 +48,7 @@ class Sugar {
     }
 
     // Line collision handling
-    for (let l of linesDrawn) {
+    for (let l of game[counter].lines) {
       let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
       if (d < this.radius + 1.5) {
         // Calculate normal vector of line
@@ -231,7 +75,7 @@ class Sugar {
       }
     }
 
-    obstacles.forEach((obstacle) => {
+    game[counter].obstacles.forEach((obstacle) => {
       if (
         this.x > obstacle.x &&
         this.x < obstacle.x + obstacle.width &&
@@ -242,7 +86,7 @@ class Sugar {
       }
     });
 
-    cups.forEach((cup) => {
+    game[counter].cups.forEach((cup) => {
       if (
         this.x > cup.x &&
         this.x < cup.x + 30 &&
@@ -253,7 +97,7 @@ class Sugar {
         this.inCup = true;
       }
     });
-    if (start) {
+    if (counter == 0) {
       // O in our
       if (this.x > 360 && this.x < 380 && this.y > 40 && this.y < 70) {
         this.y = 40 - this.radius;
@@ -332,20 +176,60 @@ class Text {
   }
 }
 
+let game = {
+  0: {
+    cups: [],
+    obstacles: [],
+    lines: [],
+    sugar: [],
+    sugarPosition: 1535 / 2,
+    texts: [
+      new Text("Our Knockoff of Sugar Sugar Everywhere", 1535 / 2, 50),
+      new Text("Start", 1535 / 2, 600),
+    ],
+    bgColor: "#3D642D",
+    fgColor: "#72ab5cff",
+  },
+  1: {
+    cups: [new Cup(100, 1535 / 2, 790 - 90)],
+    obstacles: [new Obstacle(1535 / 4, 790 - 50, 600, 20)],
+    lines: [],
+    sugar: [],
+    sugarPosition: 200,
+    bgColor: "#DC9D00",
+    fgColor: "#ffd366",
+  },
+  2: {
+    cups: [new Cup(100, 300, 560)],
+    obstacles: [
+      new Obstacle(100, 600, 600, 20),
+      new Obstacle(500, 300, 900, 20),
+    ],
+    lines: [],
+    sugar: [],
+    sugarPosition: 600,
+    bgColor: "#3E5F8A",
+    fgColor: "#74a5e7ff",
+  },
+};
+
 // start game button
 function mouseClicked() {
-  if (start) {
+  if (counter == 0) {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
-      start = false;
-      level1 = true;
-      setup();
+      counter++;
     }
   }
 }
 
 // Draw lines with mouse
 function mouseDragged() {
-  linesDrawn.push({ x1: pmouseX, y1: pmouseY, x2: mouseX, y2: mouseY });
+  game[counter].lines.push({
+    x1: pmouseX,
+    y1: pmouseY,
+    x2: mouseX,
+    y2: mouseY,
+  });
 }
 // Distance between point and line segment
 function distToSegment(px, py, x1, y1, x2, y2) {
@@ -370,4 +254,85 @@ function distToSegment(px, py, x1, y1, x2, y2) {
   let dx = px - xx;
   let dy = py - yy;
   return sqrt(dx * dx + dy * dy);
+}
+
+function preload() {
+  font = loadFont("./assets/Monocraft-01.ttf");
+}
+
+function setup() {
+  createCanvas(1535, 790);
+  textFont(font);
+}
+
+function draw() {
+  background(game[counter].bgColor);
+  if (counter == 0) {
+    textSize(32);
+    textAlign(CENTER, CENTER);
+  } else {
+    textSize(15);
+  }
+
+  game[counter].obstacles.forEach((obstacle) => {
+    noStroke();
+    fill(game[counter].fgColor);
+    rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+  });
+
+  strokeWeight(0);
+  if (frameCount % 10 === 0) {
+    game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
+  }
+
+  for (let i = game[counter].sugar.length - 1; i >= 0; i--) {
+    let s = game[counter].sugar[i];
+    s.update();
+    s.show();
+    if (s.inCup) {
+      game[counter].sugar.splice(i, 1);
+    }
+  }
+
+  game[counter].cups.forEach((cup) => {
+    fill("white");
+    noStroke();
+    ellipse(cup.x, cup.y + 20, 30, 25);
+    fill(game[counter].bgColor);
+    ellipse(cup.x, cup.y + 20, 18, 13);
+    fill("white");
+    rect(cup.x, cup.y, 30, 40);
+    stroke("black");
+    strokeWeight(2);
+    text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
+
+    if (cup.filledAmount - cup.requiredAmount == 0) {
+      win = true;
+    }
+  });
+
+  stroke(game[counter].fgColor);
+  strokeWeight(8);
+  for (let l of game[counter].lines) {
+    line(l.x1, l.y1, l.x2, l.y2);
+  }
+
+  if (win) {
+    game[counter].texts.push(
+      new Text("You Finished This Level!", width / 2, 100)
+    );
+    counter++;
+  }
+
+  if (counter == 0) {
+    strokeWeight(5);
+    stroke(game[counter].fgColor);
+    fill("black");
+    game[counter].texts.forEach((t) => {
+      text(t.text, t.x, t.y);
+    });
+    fill(game[counter].bgColor);
+  }
+
+  text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
