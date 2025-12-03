@@ -1,3 +1,4 @@
+let pcounter = 0;
 let counter = 0;
 let win = false;
 
@@ -30,21 +31,29 @@ class Sugar {
     this.x = x;
     this.y = y;
     this.vx = random(-0.1, 0.1);
-    this.vy = 0.1;
+    this.vy = 0.05;
     this.radius = 2;
     this.inCup = false;
   }
 
   update() {
     //gravity
-    this.vy += 0.1;
+    this.vy += 0.05;
 
     this.x += this.vx;
     this.y += this.vy;
     if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
       this.vx = random(-0.1, 0.1);
-      this.vy = 0.1;
+      this.vy = 0.05;
+    }
+    if (this.x > width + this.radius + this.vx) {
+      this.x = 0 - this.radius;
+      this.vy = 0.05;
+    }
+    if (this.x < 0 - this.radius - this.vx) {
+      this.x = width + this.radius;
+      this.vy = 0.05;
     }
 
     // Line collision handling
@@ -67,7 +76,7 @@ class Sugar {
         let normX = dy;
         let normY = -dx;
         this.x += normX * (this.radius + 1.5 - d);
-        this.y += normY * (this.radius + 1.5 - d);
+        this.y += normY * (this.radius + 1.5 - d) - this.radius * 2;
 
         // Add gravity along line direction
         this.vx += dx * 0.05;
@@ -159,6 +168,10 @@ class Sugar {
       } else if (this.x > 800 && this.x < 810 && this.y > 590 && this.y < 620) {
         this.y = 590 - this.radius;
       }
+    } else {
+      if (this.x > 1400 && this.x < 1450 && this.y > 95 && this.y < 150) {
+        this.y = 95 - this.radius;
+      }
     }
   }
 
@@ -220,6 +233,18 @@ function mouseClicked() {
   if (counter == 0) {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
       counter++;
+    }
+  } else {
+    if (mouseX > 1400 && mouseX < 1450 && mouseY > 100 && mouseY < 150) {
+      game[counter].lines.length = 0;
+      game[counter].sugar.length = 0;
+      game[counter].cups.forEach((cup) => {
+        cup.filledAmount = 0;
+      });
+    }
+    if (mouseX > 675 && mouseX < 850 && mouseY > 590 && mouseY < 620) {
+      counter++;
+      win = false;
     }
   }
 }
@@ -320,10 +345,13 @@ function draw() {
   }
 
   if (win) {
-    game[counter].texts.push(
-      new Text("You Finished This Level!", 1535 / 2, 100)
-    );
-    counter++;
+    textSize(32);
+    fill(150, 200);
+    rect(0, 0, width, height);
+    fill("black");
+    text("You Finished This Level!", 1535 / 2, 300);
+    text("Continue", 1535 / 2, 600);
+    textSize(15);
   }
 
   if (counter == 0) {
@@ -337,4 +365,10 @@ function draw() {
   }
 
   text(`${pmouseX}, ${pmouseY}`, 100, 100);
+  if (counter > 0) {
+    fill(game[counter].fgColor);
+    rect(1400, 100, 50);
+    fill("black");
+    text("Reset", 1425, 120);
+  }
 }
