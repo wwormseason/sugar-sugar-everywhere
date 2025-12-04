@@ -1,4 +1,3 @@
-let pcounter = 0;
 let counter = 0;
 let win = false;
 
@@ -226,6 +225,36 @@ let game = {
     bgColor: "#3E5F8A",
     fgColor: "#74a5e7ff",
   },
+  3: {
+    cups: [],
+    obstacles: [],
+    lines: [],
+    sugar: [],
+    sugarPosition: 0,
+    texts: [],
+    bgColor: "#924E7D",
+    fgColor: "#d484baff",
+  },
+  4: {
+    cups: [],
+    obstacles: [],
+    lines: [],
+    sugar: [],
+    sugarPosition: 0,
+    texts: [],
+    bgColor: "#CB2821",
+    fgColor: "#ec5f5aff",
+  },
+  5: {
+    cups: [],
+    obstacles: [],
+    lines: [],
+    sugar: [],
+    sugarPosition: 0,
+    texts: [],
+    bgColor: "#4A192C",
+    fgColor: "#8e4360ff",
+  },
 };
 
 // start game button
@@ -234,15 +263,27 @@ function mouseClicked() {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
       counter++;
     }
-  } else {
-    if (mouseX > 1400 && mouseX < 1450 && mouseY > 100 && mouseY < 150) {
+  } else if (counter > 0 && counter < 6) {
+    if (
+      mouseX > 1400 &&
+      mouseX < 1450 &&
+      mouseY > 100 &&
+      mouseY < 150 &&
+      win == false
+    ) {
       game[counter].lines.length = 0;
       game[counter].sugar.length = 0;
       game[counter].cups.forEach((cup) => {
         cup.filledAmount = 0;
       });
     }
-    if (mouseX > 675 && mouseX < 850 && mouseY > 590 && mouseY < 620) {
+    if (
+      mouseX > 675 &&
+      mouseX < 850 &&
+      mouseY > 590 &&
+      mouseY < 620 &&
+      win == true
+    ) {
       counter++;
       win = false;
     }
@@ -345,13 +386,23 @@ function draw() {
   }
 
   if (win) {
-    textSize(32);
-    fill(150, 200);
-    rect(0, 0, width, height);
-    fill("black");
-    text("You Finished This Level!", 1535 / 2, 300);
-    text("Continue", 1535 / 2, 600);
-    textSize(15);
+    if (counter <= 5) {
+      textSize(32);
+      fill(150, 200);
+      rect(0, 0, width, height);
+      fill("black");
+      text("You Finished This Level!", 1535 / 2, 300);
+      text("Continue", 1535 / 2, 600);
+      textSize(15);
+    } else {
+      textSize(32);
+      fill(150, 200);
+      rect(0, 0, width, height);
+      fill("black");
+      text("You Finished The Game!", 1535 / 2, 300);
+      text("End Game", 1535 / 2, 600);
+      textSize(15);
+    }
   }
 
   if (counter == 0) {
