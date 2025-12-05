@@ -226,8 +226,10 @@ let game = {
     fgColor: "#74a5e7ff",
   },
   3: {
-    cups: [],
-    obstacles: [],
+    cups: [new Cup (100, 300, 600), new Cup (100, 1200, 700)],
+    obstacles: [
+      new Obstacle(0, 640, 800, 20), 
+      new Obstacle(800, 740, 700 , 20)],
     lines: [],
     sugar: [],
     sugarPosition: 0,
@@ -349,7 +351,7 @@ function draw() {
   });
 
   strokeWeight(0);
-  if (frameCount % 10 === 0) {
+  if (frameCount % 1 === 0) {
     game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
   }
 
@@ -362,22 +364,29 @@ function draw() {
     }
   }
 
-  game[counter].cups.forEach((cup) => {
-    fill("white");
-    noStroke();
-    ellipse(cup.x, cup.y + 20, 30, 25);
-    fill(game[counter].bgColor);
-    ellipse(cup.x, cup.y + 20, 18, 13);
-    fill("white");
-    rect(cup.x, cup.y, 30, 40);
-    stroke("black");
-    strokeWeight(2);
-    text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
+game[counter].cups.forEach((cup) => {
+  fill("white");
+  noStroke();
+  ellipse(cup.x, cup.y + 20, 30, 25);
+  fill(game[counter].bgColor);
+  ellipse(cup.x, cup.y + 20, 18, 13);
+  fill("white");
+  rect(cup.x, cup.y, 30, 40);
+  stroke("black");
+  strokeWeight(2);
+  text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
+});
 
-    if (cup.filledAmount - cup.requiredAmount == 0) {
-      win = true;
-    }
-  });
+// Only check win if there is at least one cup
+if (game[counter].cups.length > 0) {
+  win = game[counter].cups.every(
+    cup => cup.filledAmount >= cup.requiredAmount
+  );
+} else {
+  win = false;
+}
+
+
 
   stroke(game[counter].fgColor);
   strokeWeight(8);
