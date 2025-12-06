@@ -48,22 +48,19 @@ class Sugar {
   update() {
     //gravity
     this.vy += gravity.y;
-
     this.x += this.vx;
     this.y += this.vy;
 
     //bottom to top
     if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
-      this.vx = random(-0.1, 0.1);
       this.vy = 0.05;
     }
 
     // top to bottom
     if (this.y < 0 - this.radius - this.vy) {
-      this.y = height + this.radius;
-      this.vx = random(-0.1, 0.1);
-      this.vy = 0.05;
+      this.y = 0;
+      this.vx = 0.1;
     }
 
     //Right to left
@@ -80,6 +77,8 @@ class Sugar {
 
     // Line collision handling
     for (let l of game[counter].lines) {
+      //console.log(l.x1, l.y1, l.x2, l.y);
+
       let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
       if (d < this.radius + 1.5) {
         // Calculate normal vector of line
@@ -91,18 +90,30 @@ class Sugar {
 
         // Project velocity onto the line direction (slide along line)
         let dot = this.vx * dx + this.vy * dy;
-        this.vx = dx * dot;
+        this.vx = dx * 2;
         this.vy = dy * dot;
 
         // Stick particle to the line surface
-        let normX = dy;
-        let normY = -dx;
-        this.x += normX * (this.radius + 1.5 - d);
-        this.y += normY * (this.radius + 1.5 - d) - this.radius * 2;
+        if (anti) {
+          let normX = -dy;
+          let normY = dx;
+          this.x -= normX * (this.radius - 1.5 - d);
+          this.y -= normY * (this.radius + 1.5 - d) - this.radius * 2;
+        } else {
+          let normX = dy;
+          let normY = -dx;
+          this.x += normX * (this.radius - 1.5 - d);
+          this.y += normY * (this.radius + 1.5 - d) - this.radius * 2;
+        }
 
         // Add gravity along line direction
-        this.vx += dx * 0.05;
-        this.vy += dy * 0.05;
+        if (anti) {
+          this.vx -= dx * 0.1;
+          this.vy -= dy * 0.1;
+        } else {
+          this.vx += dx * 0.1;
+          this.vy += dy * 0.1;
+        }
       }
     }
 
@@ -114,6 +125,7 @@ class Sugar {
         this.y < obstacle.y + obstacle.height + this.vy
       ) {
         this.y = obstacle.y - this.radius;
+        this.vx = 0.1;
       }
     });
 
@@ -211,8 +223,15 @@ class Sugar {
         this.y = 590 - this.radius;
       }
     } else {
+      // reset button
       if (this.x > 1400 && this.x < 1450 && this.y > 95 && this.y < 150) {
         this.y = 95 - this.radius;
+      }
+      // flip gravity button
+      if (counter == 4 || counter == 5) {
+        if (this.x > 40 && this.x < 120 && this.y > 65 && this.y < 145) {
+          this.y = 65 - this.radius;
+        }
       }
     }
   }
@@ -329,6 +348,9 @@ function mouseClicked() {
         cup.filledAmount = 0;
       });
     }
+    if (mouseX > 40 && mouseX < 120 && mouseY > 85 && mouseY < 165) {
+      toggleGravity();
+    }
     if (
       mouseX > 675 &&
       mouseX < 850 &&
@@ -403,22 +425,10 @@ function setup() {
   createCanvas(1535, 790);
   textFont(font);
 
-  button = createButton("Turn Gravity On ☝️");
-  button.position(60, 130);
-  button.size(100, 50);
-  button.style("border-radius: 50px;");
-  button.mousePressed(toggleGravity);
   gravity = createVector(0, 0.05);
 }
 
 function draw() {
-  button.style("background-color", game[counter].bgColor);
-  if (counter === 4 || counter === 5) {
-    button.show();
-  } else {
-    button.hide();
-  }
-
   if (game[counter].sugar.length > 0) {
     if (!sugarFallingSound.isPlaying()) {
       sugarFallingSound.loop();
@@ -444,7 +454,7 @@ function draw() {
   });
 
   strokeWeight(0);
-  if (frameCount % 3 === 0) {
+  if (frameCount % 4 === 0) {
     game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
   }
 
@@ -455,6 +465,12 @@ function draw() {
     if (s.inCup) {
       game[counter].sugar.splice(i, 1);
     }
+  }
+
+  stroke(game[counter].fgColor);
+  strokeWeight(8);
+  for (let l of game[counter].lines) {
+    line(l.x1, l.y1, l.x2, l.y2);
   }
 
   game[counter].cups.forEach((cup) => {
@@ -470,11 +486,11 @@ function draw() {
       rect(cup.x, cup.y, 30, 40);
     } else {
       //flipped cup
-      rect(cup.x, cup.y, 30, 40);
-      fill("white");
-      ellipse(cup.x, cup.y + 40, 30, 25);
+      ellipse(cup.x, cup.y + 20, 30, 25);
       fill(game[counter].bgColor);
-      ellipse(cup.x, cup.y + 40, 18, 13);
+      ellipse(cup.x, cup.y + 20, 18, 13);
+      fill("white");
+      rect(cup.x, cup.y, 30, 40);
     }
 
     stroke("black");
@@ -499,17 +515,18 @@ function draw() {
   if (!win) {
     levelWon = false;
   }
-
   stroke(game[counter].fgColor);
-  strokeWeight(8);
-  for (let l of game[counter].lines) {
-    line(l.x1, l.y1, l.x2, l.y2);
-  }
   if (counter > 0) {
     fill(game[counter].fgColor);
     rect(1400, 100, 50);
     fill("black");
     text("Reset", 1425, 120);
+  }
+  if (counter) {
+    fill(game[counter].fgColor);
+    rect(45, 70, 70);
+    fill("black");
+    text(" Flip\nGravity", 80, 100);
   }
   if (win) {
     if (counter < 5) {
@@ -544,18 +561,13 @@ function draw() {
     fill(game[counter].bgColor);
   }
 
-  // text(`${pmouseX}, ${pmouseY}`, 100, 100);
+  text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
-
 function toggleGravity() {
   anti = !anti;
   if (anti) {
     gravity.y = -0.05;
-    button.html("Gravity Off 🫳");
-    buttonPress.play();
   } else {
     gravity.y = 0.05;
-    button.html("Gravity On 🫴");
-    buttonPress.play();
   }
 }
