@@ -226,13 +226,11 @@ let game = {
     fgColor: "#74a5e7ff",
   },
   3: {
-    cups: [new Cup (100, 300, 600), new Cup (100, 1200, 700)],
-    obstacles: [
-      new Obstacle(0, 640, 800, 20), 
-      new Obstacle(800, 740, 700 , 20)],
+    cups: [new Cup(100, 300, 600), new Cup(100, 1200, 700)],
+    obstacles: [new Obstacle(0, 640, 800, 20), new Obstacle(800, 740, 700, 20)],
     lines: [],
     sugar: [],
-    sugarPosition: 0,
+    sugarPosition: 800,
     texts: [],
     bgColor: "#924E7D",
     fgColor: "#d484baff",
@@ -265,7 +263,7 @@ function mouseClicked() {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
       counter++;
     }
-  } else if (counter > 0 && counter < 6) {
+  } else if (counter > 0 && counter <= 5) {
     if (
       mouseX > 1400 &&
       mouseX < 1450 &&
@@ -273,11 +271,12 @@ function mouseClicked() {
       mouseY < 150 &&
       win == false
     ) {
-      game[counter].lines.length = 0;
-      game[counter].sugar.length = 0;
-      game[counter].cups.forEach((cup) => {
-        cup.filledAmount = 0;
-      });
+      // game[counter].lines.length = 0;
+      // game[counter].sugar.length = 0;
+      // game[counter].cups.forEach((cup) => {
+      //   cup.filledAmount = 0;
+      // });
+      win = true;
     }
     if (
       mouseX > 675 &&
@@ -286,8 +285,20 @@ function mouseClicked() {
       mouseY < 620 &&
       win == true
     ) {
-      counter++;
-      win = false;
+      if (counter < 5) {
+        counter++;
+        win = false;
+      }
+    }
+    if (
+      mouseX > 680 &&
+      mouseX < 850 &&
+      mouseY > 590 &&
+      mouseY < 620 &&
+      win == true &&
+      counter == 5
+    ) {
+      window.close();
     }
   }
 }
@@ -351,7 +362,7 @@ function draw() {
   });
 
   strokeWeight(0);
-  if (frameCount % 1 === 0) {
+  if (frameCount % 3 === 0) {
     game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
   }
 
@@ -364,29 +375,27 @@ function draw() {
     }
   }
 
-game[counter].cups.forEach((cup) => {
-  fill("white");
-  noStroke();
-  ellipse(cup.x, cup.y + 20, 30, 25);
-  fill(game[counter].bgColor);
-  ellipse(cup.x, cup.y + 20, 18, 13);
-  fill("white");
-  rect(cup.x, cup.y, 30, 40);
-  stroke("black");
-  strokeWeight(2);
-  text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
-});
+  game[counter].cups.forEach((cup) => {
+    fill("white");
+    noStroke();
+    ellipse(cup.x, cup.y + 20, 30, 25);
+    fill(game[counter].bgColor);
+    ellipse(cup.x, cup.y + 20, 18, 13);
+    fill("white");
+    rect(cup.x, cup.y, 30, 40);
+    stroke("black");
+    strokeWeight(2);
+    text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
+  });
 
-// Only check win if there is at least one cup
-if (game[counter].cups.length > 0) {
-  win = game[counter].cups.every(
-    cup => cup.filledAmount >= cup.requiredAmount
-  );
-} else {
-  win = false;
-}
-
-
+  // Only check win if there is at least one cup
+  // if (game[counter].cups.length > 0) {
+  //   win = game[counter].cups.every(
+  //     (cup) => cup.filledAmount >= cup.requiredAmount
+  //   );
+  // } else {
+  //   win = false;
+  // }
 
   stroke(game[counter].fgColor);
   strokeWeight(8);
@@ -395,7 +404,7 @@ if (game[counter].cups.length > 0) {
   }
 
   if (win) {
-    if (counter <= 5) {
+    if (counter < 5) {
       textSize(32);
       fill(150, 200);
       rect(0, 0, width, height);
