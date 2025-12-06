@@ -304,12 +304,14 @@ function mouseClicked() {
 
 // Draw lines with mouse
 function mouseDragged() {
-  game[counter].lines.push({
-    x1: pmouseX,
-    y1: pmouseY,
-    x2: mouseX,
-    y2: mouseY,
-  });
+  if (win == false) {
+    game[counter].lines.push({
+      x1: pmouseX,
+      y1: pmouseY,
+      x2: mouseX,
+      y2: mouseY,
+    });
+  }
 }
 // Distance between point and line segment
 function distToSegment(px, py, x1, y1, x2, y2) {
@@ -401,12 +403,19 @@ function draw() {
   for (let l of game[counter].lines) {
     line(l.x1, l.y1, l.x2, l.y2);
   }
-
+  if (counter > 0) {
+    fill(game[counter].fgColor);
+    rect(1400, 100, 50);
+    fill("black");
+    text("Reset", 1425, 120);
+  }
   if (win) {
     if (counter < 5) {
+      noStroke();
       textSize(32);
-      fill(150, 200);
+      fill(255, 200);
       rect(0, 0, width, height);
+      stroke(game[counter].fgColor);
       fill("black");
       text("You Finished This Level!", 1535 / 2, 300);
       text("Continue", 1535 / 2, 600);
@@ -432,11 +441,5 @@ function draw() {
     fill(game[counter].bgColor);
   }
 
-  text(`${pmouseX}, ${pmouseY}`, 100, 100);
-  if (counter > 0) {
-    fill(game[counter].fgColor);
-    rect(1400, 100, 50);
-    fill("black");
-    text("Reset", 1425, 120);
-  }
+  // text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
