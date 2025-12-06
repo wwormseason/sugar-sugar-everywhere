@@ -271,12 +271,11 @@ function mouseClicked() {
       mouseY < 150 &&
       win == false
     ) {
-      // game[counter].lines.length = 0;
-      // game[counter].sugar.length = 0;
-      // game[counter].cups.forEach((cup) => {
-      //   cup.filledAmount = 0;
-      // });
-      win = true;
+      game[counter].lines.length = 0;
+      game[counter].sugar.length = 0;
+      game[counter].cups.forEach((cup) => {
+        cup.filledAmount = 0;
+      });
     }
     if (
       mouseX > 675 &&
@@ -388,14 +387,14 @@ function draw() {
     text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
   });
 
-  // Only check win if there is at least one cup
-  // if (game[counter].cups.length > 0) {
-  //   win = game[counter].cups.every(
-  //     (cup) => cup.filledAmount >= cup.requiredAmount
-  //   );
-  // } else {
-  //   win = false;
-  // }
+  //  Only check win if there is at least one cup
+  if (game[counter].cups.length > 0) {
+    win = game[counter].cups.every(
+      (cup) => cup.filledAmount >= cup.requiredAmount
+    );
+  } else {
+    win = false;
+  }
 
   stroke(game[counter].fgColor);
   strokeWeight(8);
