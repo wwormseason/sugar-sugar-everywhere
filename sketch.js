@@ -1,7 +1,7 @@
 let counter = 0;
 let win = false;
 let gravity;
-let anti = false ;
+let anti = false;
 let button;
 let sugarhitCup;
 let sugarFallingSound;
@@ -52,9 +52,7 @@ class Sugar {
     this.x += this.vx;
     this.y += this.vy;
 
-
-
-  //bottom to top
+    //bottom to top
     if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
       this.vx = random(-0.1, 0.1);
@@ -74,7 +72,7 @@ class Sugar {
       this.vy = 0.05;
     }
 
-    //left to right 
+    //left to right
     if (this.x < 0 - this.radius - this.vx) {
       this.x = width + this.radius;
       this.vy = 0.05;
@@ -120,34 +118,36 @@ class Sugar {
     });
 
     game[counter].cups.forEach((cup) => {
-    if(!cup.flipped){
-      if (
-        this.x > cup.x &&
-        this.x < cup.x + 30 &&
-        this.y > cup.y &&
-        this.y < cup.y + 20
-      ) {
-        cup.fill();
-        this.inCup = true;
-        if (!sugarhitCup.isPlaying()) { // prevent multiple overlaps
-        sugarhitCup.play();
+      if (!cup.flipped) {
+        if (
+          this.x > cup.x &&
+          this.x < cup.x + 30 &&
+          this.y > cup.y &&
+          this.y < cup.y + 20
+        ) {
+          cup.fill();
+          this.inCup = true;
+          if (!sugarhitCup.isPlaying()) {
+            // prevent multiple overlaps
+            sugarhitCup.play();
+          }
+        }
+      } else {
+        if (
+          this.x > cup.x &&
+          this.x < cup.x + 30 &&
+          this.y > cup.y + 40 &&
+          this.y < cup.y + 60
+        ) {
+          cup.fill();
+          this.inCup = true;
+          if (!sugarhitCup.isPlaying()) {
+            // prevent multiple overlaps
+            sugarhitCup.play();
+          }
+        }
       }
-    }
-  }
-    else{
-      if (
-        this.x > cup.x &&
-        this.x < cup.x + 30 &&
-        this.y > cup.y + 40 &&
-        this.y < cup.y + 60
-      ) {
-        cup.fill();
-        this.inCup = true;
-        if (!sugarhitCup.isPlaying()) { // prevent multiple overlaps
-        sugarhitCup.play();
-      }
-      }
-  }});
+    });
     if (counter == 0) {
       // O in our
       if (this.x > 360 && this.x < 380 && this.y > 40 && this.y < 70) {
@@ -269,13 +269,11 @@ let game = {
     fgColor: "#74a5e7ff",
   },
   3: {
-    cups: [new Cup (100, 300, 600), new Cup (100, 1200, 700)],
-    obstacles: [
-      new Obstacle(0, 640, 800, 20), 
-      new Obstacle(800, 740, 700 , 20)],
+    cups: [new Cup(100, 300, 600), new Cup(100, 1200, 700)],
+    obstacles: [new Obstacle(0, 640, 800, 20), new Obstacle(800, 740, 700, 20)],
     lines: [],
     sugar: [],
-    sugarPosition: 100,
+    sugarPosition: 800,
     texts: [],
     bgColor: "#924E7D",
     fgColor: "#d484baff",
@@ -292,11 +290,15 @@ let game = {
   },
   5: {
     //Amount, x, y, flipped?
-    cups: [new Cup(100, 910, 590), new Cup(100, 910, 10,  true),new Cup(100, 500, 490, true)],
+    cups: [
+      new Cup(100, 910, 590),
+      new Cup(100, 910, 10, true),
+      new Cup(100, 500, 490, true),
+    ],
     obstacles: [
       //x,y, width , height
-      new Obstacle(130, 640, 140, 20), 
-      new Obstacle(700, 630, 400 , 20),
+      new Obstacle(130, 640, 140, 20),
+      new Obstacle(700, 630, 400, 20),
     ],
     lines: [],
     sugar: [],
@@ -313,7 +315,7 @@ function mouseClicked() {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
       counter++;
     }
-  } else if (counter > 0 && counter < 6) {
+  } else if (counter > 0 && counter <= 5) {
     if (
       mouseX > 1400 &&
       mouseX < 1450 &&
@@ -334,20 +336,34 @@ function mouseClicked() {
       mouseY < 620 &&
       win == true
     ) {
-      counter++;
-      win = false;
+      if (counter < 5) {
+        counter++;
+        win = false;
+      }
+    }
+    if (
+      mouseX > 680 &&
+      mouseX < 850 &&
+      mouseY > 590 &&
+      mouseY < 620 &&
+      win == true &&
+      counter == 5
+    ) {
+      window.close();
     }
   }
 }
 
 // Draw lines with mouse
 function mouseDragged() {
-  game[counter].lines.push({
-    x1: pmouseX,
-    y1: pmouseY,
-    x2: mouseX,
-    y2: mouseY,
-  });
+  if (win == false) {
+    game[counter].lines.push({
+      x1: pmouseX,
+      y1: pmouseY,
+      x2: mouseX,
+      y2: mouseY,
+    });
+  }
 }
 // Distance between point and line segment
 function distToSegment(px, py, x1, y1, x2, y2) {
@@ -376,43 +392,42 @@ function distToSegment(px, py, x1, y1, x2, y2) {
 
 function preload() {
   font = loadFont("./assets/Monocraft-01.ttf");
-  sugarFallingSound = loadSound('AudioAssets/sandfalling.mp3');
-  sugarhitCup = loadSound('AudioAssets/sandcollectingincup.mp3');
-  buttonPress = loadSound('AudioAssets/gravitybuttonsound.mp3');
-  levelComplete = loadSound('AudioAssets/level-passed-143039.mp3');
-  youWin = loadSound('AudioAssets/winsoundeffect.mp3');
+  sugarFallingSound = loadSound("AudioAssets/sandfalling.mp3");
+  sugarhitCup = loadSound("AudioAssets/sandcollectingincup.mp3");
+  buttonPress = loadSound("AudioAssets/gravitybuttonsound.mp3");
+  levelComplete = loadSound("AudioAssets/level-passed-143039.mp3");
+  youWin = loadSound("AudioAssets/winsoundeffect.mp3");
 }
 
 function setup() {
-
   createCanvas(1535, 790);
   textFont(font);
 
-  button =  createButton('Turn Gravity On ☝️');
+  button = createButton("Turn Gravity On ☝️");
   button.position(60, 130);
-  button.size(100,50);
-  button.style('border-radius: 50px;');
+  button.size(100, 50);
+  button.style("border-radius: 50px;");
   button.mousePressed(toggleGravity);
-  gravity = createVector(0,0.05);
+  gravity = createVector(0, 0.05);
 }
 
 function draw() {
-    button.style('background-color', game[counter].bgColor);
+  button.style("background-color", game[counter].bgColor);
   if (counter === 4 || counter === 5) {
-  button.show();
-} else {
-  button.hide();
-}
+    button.show();
+  } else {
+    button.hide();
+  }
 
-if (game[counter].sugar.length > 0) {
-  if (!sugarFallingSound.isPlaying()) {
-    sugarFallingSound.loop();
+  if (game[counter].sugar.length > 0) {
+    if (!sugarFallingSound.isPlaying()) {
+      sugarFallingSound.loop();
+    }
+  } else {
+    if (sugarFallingSound.isPlaying()) {
+      sugarFallingSound.stop();
+    }
   }
-} else {
-  if (sugarFallingSound.isPlaying()) {
-    sugarFallingSound.stop();
-  }
-}
 
   background(game[counter].bgColor);
   if (counter == 0) {
@@ -429,7 +444,7 @@ if (game[counter].sugar.length > 0) {
   });
 
   strokeWeight(0);
-  if (frameCount % 1 === 0) {
+  if (frameCount % 3 === 0) {
     game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
   }
 
@@ -442,47 +457,46 @@ if (game[counter].sugar.length > 0) {
     }
   }
 
-game[counter].cups.forEach((cup) => {
-  fill("white");
-  noStroke();
+  game[counter].cups.forEach((cup) => {
+    fill("white");
+    noStroke();
 
-  if(!cup.flipped){
-    //normal cup
-  ellipse(cup.x, cup.y + 20, 30, 25);
-  fill(game[counter].bgColor);
-  ellipse(cup.x, cup.y + 20, 18, 13);
-  fill("white");
-  rect(cup.x, cup.y, 30, 40);
+    if (!cup.flipped) {
+      //normal cup
+      ellipse(cup.x, cup.y + 20, 30, 25);
+      fill(game[counter].bgColor);
+      ellipse(cup.x, cup.y + 20, 18, 13);
+      fill("white");
+      rect(cup.x, cup.y, 30, 40);
+    } else {
+      //flipped cup
+      rect(cup.x, cup.y, 30, 40);
+      fill("white");
+      ellipse(cup.x, cup.y + 40, 30, 25);
+      fill(game[counter].bgColor);
+      ellipse(cup.x, cup.y + 40, 18, 13);
+    }
+
+    stroke("black");
+    strokeWeight(2);
+    text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
+  });
+
+  // Only check win if there is at least one cup
+  if (game[counter].cups.length > 0) {
+    win = game[counter].cups.every(
+      (cup) => cup.filledAmount >= cup.requiredAmount
+    );
+  } else {
+    win = false;
   }
-  else {
-  //flipped cup
-  rect(cup.x, cup.y, 30, 40);
-  fill("white");
-  ellipse(cup.x, cup.y + 40, 30, 25);
-  fill(game[counter].bgColor);
-  ellipse(cup.x, cup.y + 40, 18, 13);
-  }
 
-  stroke("black");
-  strokeWeight(2);
-  text(cup.requiredAmount - cup.filledAmount, cup.x + 15, cup.y + 20);
-});
-
-// Only check win if there is at least one cup
-if (game[counter].cups.length > 0) {
-  win = game[counter].cups.every(
-    cup => cup.filledAmount >= cup.requiredAmount
-  );
-} else {
-  win = false;
-}
-
-  if (win && !levelWon){
+  if (win && !levelWon) {
     levelComplete.play();
     levelWon = true;
   }
 
-  if(!win){
+  if (!win) {
     levelWon = false;
   }
 
@@ -491,12 +505,19 @@ if (game[counter].cups.length > 0) {
   for (let l of game[counter].lines) {
     line(l.x1, l.y1, l.x2, l.y2);
   }
-
+  if (counter > 0) {
+    fill(game[counter].fgColor);
+    rect(1400, 100, 50);
+    fill("black");
+    text("Reset", 1425, 120);
+  }
   if (win) {
-    if (counter <= 5) {
+    if (counter < 5) {
+      noStroke();
       textSize(32);
-      fill(150, 200);
+      fill(255, 200);
       rect(0, 0, width, height);
+      stroke(game[counter].fgColor);
       fill("black");
       text("You Finished This Level!", 1535 / 2, 300);
       text("Continue", 1535 / 2, 600);
@@ -523,25 +544,18 @@ if (game[counter].cups.length > 0) {
     fill(game[counter].bgColor);
   }
 
-  text(`${pmouseX}, ${pmouseY}`, 100, 100);
-  if (counter > 0) {
-    fill(game[counter].fgColor);
-    rect(1400, 100, 50);
-    fill("black");
-    text("Reset", 1425, 120);
-  }
+  // text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
 
-function toggleGravity(){
+function toggleGravity() {
   anti = !anti;
-  if (anti ){
+  if (anti) {
     gravity.y = -0.05;
-    button.html('Gravity Off 🫳');
+    button.html("Gravity Off 🫳");
     buttonPress.play();
-  }
-  else{
+  } else {
     gravity.y = 0.05;
-    button.html('Gravity On 🫴')
+    button.html("Gravity On 🫴");
     buttonPress.play();
   }
 }
