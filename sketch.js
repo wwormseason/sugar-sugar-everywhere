@@ -66,49 +66,64 @@ class Sugar {
     }
 
     //Right to left
-    if (this.x > width + this.radius + this.vx) {
+    if (this.x > 1535 + this.radius + this.vx) {
       this.x = 0 - this.radius;
       this.vy = 0.05;
     }
 
     //left to right
     if (this.x < 0 - this.radius - this.vx) {
-      this.x = width + this.radius;
+      this.x = 1535 + this.radius;
       this.vy = 0.05;
     }
 
     // Line collision handling
     for (let l of game[counter].lines) {
-      //console.log(l.x1, l.y1, l.x2, l.y);
+      //console.log(l.x1, l.y1, l.x2, l.y2);
 
       let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
       if (d < this.radius + 1.5) {
-      // line direction
-      let dx = l.x2 - l.x1;
-      let dy = l.y2 - l.y1;
-      let len = sqrt(dx * dx + dy * dy);
-      dx /= len;
-      dy /= len;
+        let x1, x2, y1, y2;
+        if (l.x2 < l.x1 && l.y2 < l.y1) {
+          x1 = l.x2;
+          x2 = l.x1;
 
-      // normal vector
-      let nx = -dy;
-      let ny = dx;
+          y1 = l.y2;
+          y2 = l.y1;
+        } else {
+          x1 = l.x1;
+          x2 = l.x2;
 
-      // distance from line (signed)
-      let distToLine = (this.x - l.x1) * nx + (this.y - l.y1) * ny;
+          y1 = l.y1;
+          y2 = l.y2;
+        }
 
-      // push sugar out of the line
-      this.x -= nx * (this.radius - distToLine);
-      this.y -= ny * (this.radius - distToLine);
+        // line direction
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let len = sqrt(dx * dx + dy * dy);
+        dx /= len;
+        dy /= len;
 
-      // Velocity → project onto tangent (sliding)
-      let dot = this.vx * dx + this.vy * dy;
-      this.vx = dx * dot;
-      this.vy = dy * dot;
+        // normal vector
+        let nx = -dy;
+        let ny = dx;
 
-      //  ADJUST for gravity (SMOOTH)
-      this.vx += dx * gravity.y * 0.5;
-      this.vy += dy * gravity.y * 0.5;
+        // distance from line (signed)
+        let distToLine = (this.x - x1) * nx + (this.y - y1) * ny;
+
+        // push sugar out of the line
+        this.x -= nx * (this.radius - distToLine);
+        this.y -= ny * (this.radius - distToLine) * 2;
+
+        // Velocity → project onto tangent (sliding)
+        let dot = this.vx * dx + this.vy * dy;
+        this.vx = dx * dot;
+        this.vy = dy * dot;
+
+        //  ADJUST for gravity (SMOOTH)
+        this.vx += dx * gravity.y * 0.5;
+        this.vy += dy * gravity.y * 0.5;
       }
     }
 
@@ -122,6 +137,16 @@ class Sugar {
         this.y = obstacle.y - this.radius;
         this.vx = 0.1;
       }
+      if (
+        this.x > obstacle.x &&
+        this.x < obstacle.x + obstacle.width &&
+        this.y <= obstacle.y + obstacle.height - this.vy &&
+        this.y >= obstacle.y + obstacle.height + this.vy
+      ) {
+        console.log("bottom");
+        this.y = obstacle.y + obstacle.height;
+        //this.vy = -this.vy;
+      }
     });
 
     game[counter].cups.forEach((cup) => {
@@ -134,7 +159,7 @@ class Sugar {
         ) {
           cup.fill();
           this.inCup = true;
-          if (!sugarhitCup.isPlaying() && !win ) {
+          if (!sugarhitCup.isPlaying() && !win) {
             // prevent multiple overlaps
             sugarhitCup.play();
           }
@@ -148,7 +173,7 @@ class Sugar {
         ) {
           cup.fill();
           this.inCup = true;
-          if (!sugarhitCup.isPlaying() && !win ) {
+          if (!sugarhitCup.isPlaying() && !win) {
             // prevent multiple overlaps
             sugarhitCup.play();
           }
@@ -222,6 +247,11 @@ class Sugar {
       if (this.x > 1400 && this.x < 1450 && this.y > 95 && this.y < 150) {
         this.y = 95 - this.radius;
       }
+      if (counter > 3) {
+        if (this.x > 40 && this.x < 120 && this.y > 65 && this.y < 145) {
+          this.y = 65 - this.radius;
+        }
+      }
     }
   }
 
@@ -245,17 +275,17 @@ let game = {
     obstacles: [],
     lines: [],
     sugar: [],
-    sugarPosition: 1535 / 2,
+    sugarPosition: 767.5,
     texts: [
-      new Text("Our Knockoff of Sugar Sugar Everywhere", 1535 / 2, 50),
-      new Text("Start", 1535 / 2, 600),
+      new Text("Our Knockoff of Sugar Sugar Everywhere", 767.5, 50),
+      new Text("Start", 767.5, 600),
     ],
     bgColor: "#3D642D",
     fgColor: "#72ab5cff",
   },
   1: {
-    cups: [new Cup(100, 1535 / 2, 790 - 90)],
-    obstacles: [new Obstacle(1535 / 4, 790 - 50, 600, 20)],
+    cups: [new Cup(100, 767.5, 700)],
+    obstacles: [new Obstacle(383.75, 740, 600, 20)],
     lines: [],
     sugar: [],
     sugarPosition: 200,
@@ -287,8 +317,8 @@ let game = {
     fgColor: "#d484baff",
   },
   4: {
-    cups: [new Cup(100, 1535 / 2, 120 - 90, true)],
-    obstacles: [new Obstacle(1535 / 4, 790 - 50, 600, 20)],
+    cups: [new Cup(100, 767.5, 30, true)],
+    obstacles: [new Obstacle(383.75, 740, 600, 20)],
     lines: [],
     sugar: [],
     sugarPosition: 200,
@@ -319,7 +349,6 @@ let game = {
 
 // start game button
 function mouseClicked() {
-
   if (counter == 0) {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
       counter++;
@@ -350,20 +379,30 @@ function mouseClicked() {
         counter++;
         win = false;
         levelWon = false;
+        if (counter > 3 && anti == true) {
+          toggleGravity();
+        }
       }
     }
     if (
-      win && 
-      counter === 5 &&
-      mouseX > width/ 2 - 100 &&
-      mouseX < width/ 2 + 100 &&
-      mouseY > 600 - 20 &&
-      mouseY < 600 + 20 &&
+      mouseX > 667.5 &&
+      mouseX < 867.5 &&
+      mouseY > 580 &&
+      mouseY < 620 &&
       win == true &&
       counter == 5
     ) {
       gameWon = true;
       youWin.loop();
+    }
+    if (
+      mouseX > 40 &&
+      mouseX < 120 &&
+      mouseY > 85 &&
+      mouseY < 165 &&
+      counter > 3
+    ) {
+      toggleGravity();
     }
   }
 }
@@ -381,6 +420,8 @@ function mouseDragged() {
 }
 // Distance between point and line segment
 function distToSegment(px, py, x1, y1, x2, y2) {
+  //console.log(px, py, x1, x2, y1, y2);
+
   let A = px - x1;
   let B = py - y1;
   let C = x2 - x1;
@@ -411,7 +452,7 @@ function preload() {
   buttonPress = loadSound("AudioAssets/gravitybuttonsound.mp3");
   levelComplete = loadSound("AudioAssets/level-passed-143039.mp3");
   youWin = loadSound("AudioAssets/winsoundeffect.mp3");
-  backimage = loadImage('AudioAssets/WinnninggameScreen.png'); 
+  backimage = loadImage("AudioAssets/WinnninggameScreen.png");
 }
 
 function setup() {
@@ -421,26 +462,13 @@ function setup() {
   sugarFallingSound.setVolume(0.2);
   sugarhitCup.setVolume(0.3);
 
-  button = createButton("Turn Gravity On ☝️");
-  button.position(60, 130);
-  button.size(100, 50);
-  button.style("border-radius: 50px;");
-  button.mousePressed(toggleGravity);
   gravity = createVector(0, 0.05);
 }
 
 function draw() {
-    if (gameWon) {
-      drawEndScreen();
-      button.hide();
-      return; // stop the game
-    }
-
-  button.style("background-color", game[counter].bgColor);
-  if ( (counter === 4 || counter === 5) ){
-    button.show();
-  } else {
-    button.hide();
+  if (gameWon) {
+    drawEndScreen();
+    return; // stop the game
   }
 
   if (!win) {
@@ -524,23 +552,23 @@ function draw() {
   }
 
   // Handle sounds and level completion
-if (win && !levelWon) {
+  if (win && !levelWon) {
     // Stop ongoing sounds
     if (sugarFallingSound.isPlaying()) {
-        sugarFallingSound.stop();
+      sugarFallingSound.stop();
     }
     if (sugarhitCup.isPlaying()) {
-        sugarhitCup.stop();
+      sugarhitCup.stop();
     }
 
     // Play level complete sound once
     levelComplete.play();
     levelWon = true;
-} 
+  }
 
-if (!win) {
+  if (!win) {
     levelWon = false;
-}
+  }
 
   stroke(game[counter].fgColor);
   if (counter > 0) {
@@ -548,6 +576,12 @@ if (!win) {
     rect(1400, 100, 50);
     fill("black");
     text("Reset", 1425, 120);
+  }
+  if (counter > 3) {
+    fill(game[counter].fgColor);
+    rect(45, 70, 70);
+    fill("black");
+    text(" Flip\nGravity", 80, 100);
   }
   if (win) {
     if (counter < 5) {
@@ -557,16 +591,16 @@ if (!win) {
       rect(0, 0, width, height);
       stroke(game[counter].fgColor);
       fill("black");
-      text("You Finished This Level!", 1535 / 2, 300);
-      text("Continue", 1535 / 2, 600);
+      text("You Finished This Level!", 767.5, 300);
+      text("Continue", 767.5, 600);
       textSize(15);
     } else {
       textSize(32);
       fill(150, 200);
       rect(0, 0, width, height);
       fill("black");
-      text("You Finished The Game!", 1535 / 2, 300);
-      text("End Game", 1535 / 2, 600);
+      text("You Finished The Game!", 767.5, 300);
+      text("End Game", 767.5, 600);
       textSize(15);
     }
   }
@@ -581,19 +615,15 @@ if (!win) {
     fill(game[counter].bgColor);
   }
 
-  text(`${pmouseX}, ${pmouseY}`, 100, 100);
+  //text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
 
 function toggleGravity() {
   anti = !anti;
   if (anti) {
     gravity.y = -0.05;
-    button.html("Gravity Off 🫳");
-    buttonPress.play();
   } else {
     gravity.y = 0.05;
-        button.html("Gravity On 🫴");
-    buttonPress.play();
   }
 }
 
@@ -603,6 +633,6 @@ function drawEndScreen() {
   textAlign(CENTER, CENTER);
 
   textSize(50);
-  text("You Have Finished Our", width / 2, height / 2 - 350);
-  text("Knockoff Game of Sugar Sugar, Congrats!", width / 2, height / 2 + 350);
+  text("You Have Finished Our", 767.5, 45);
+  text("Knockoff Game of Sugar Sugar, Congrats!", 767.5, 745);
 }
