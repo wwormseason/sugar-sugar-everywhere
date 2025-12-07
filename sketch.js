@@ -82,7 +82,7 @@ class Sugar {
       //console.log(l.x1, l.y1, l.x2, l.y2);
 
       let d = distToSegment(this.x, this.y, l.x1, l.y1, l.x2, l.y2);
-      if (d < this.radius + 1.5) {
+      if (d < this.radius + 4) {
         let x1, x2, y1, y2;
         if (l.x2 < l.x1 && l.y2 < l.y1) {
           x1 = l.x2;
@@ -114,7 +114,7 @@ class Sugar {
 
         // push sugar out of the line
         this.x -= nx * (this.radius - distToLine);
-        this.y -= ny * (this.radius - distToLine) * 2;
+        this.y -= ny * (this.radius - distToLine) * 2 ;
 
         // Velocity → project onto tangent (sliding)
         let dot = this.vx * dx + this.vy * dy;
@@ -351,6 +351,7 @@ let game = {
 function mouseClicked() {
   if (counter == 0) {
     if (mouseX > 710 && mouseX < 810 && mouseY > 590 && mouseY < 620) {
+      buttonPress.play();
       counter++;
     }
   } else if (counter > 0 && counter <= 5) {
@@ -361,6 +362,7 @@ function mouseClicked() {
       mouseY < 150 &&
       win == false
     ) {
+      buttonPress.play();
       game[counter].lines.length = 0;
       game[counter].sugar.length = 0;
       game[counter].cups.forEach((cup) => {
@@ -375,6 +377,7 @@ function mouseClicked() {
       mouseY < 620 &&
       win == true
     ) {
+      buttonPress.play();
       if (counter < 5) {
         counter++;
         win = false;
@@ -463,6 +466,7 @@ function setup() {
   sugarhitCup.setVolume(0.3);
 
   gravity = createVector(0, 0.05);
+
 }
 
 function draw() {
@@ -579,9 +583,9 @@ function draw() {
   }
   if (counter > 3) {
     fill(game[counter].fgColor);
-    rect(45, 70, 70);
+    rect(45, 70, 70, 60);;
     fill("black");
-    text(" Flip\nGravity", 80, 100);
+    text(anti ? "Unflip\nGravity" : "Flip\nGravity", 80, 100);
   }
   if (win) {
     if (counter < 5) {
@@ -614,6 +618,7 @@ function draw() {
     });
     fill(game[counter].bgColor);
   }
+  
 
   //text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
@@ -625,6 +630,7 @@ function toggleGravity() {
   } else {
     gravity.y = 0.05;
   }
+  buttonPress.play();
 }
 
 function drawEndScreen() {
