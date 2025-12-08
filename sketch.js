@@ -638,7 +638,7 @@ function draw() {
   });
 
   strokeWeight(0);
-  if (frameCount % 4 === 0) {
+  if (frameCount % 10 === 0) {
     game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
   }
 
