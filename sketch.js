@@ -1,4 +1,4 @@
-let counter = 0;
+let counter = 4;
 let win = false;
 let gravity;
 let anti = false;
@@ -131,9 +131,20 @@ class Sugar {
         this.x > s.x &&
         this.x < s.x + s.radius &&
         this.y > s.y &&
-        this.y < s.y + s.radius + s.vy
+        this.y < s.y + s.radius + s.vy &&
+        anti == false
       ) {
         this.y = s.y - s.radius;
+      }
+      if (
+        this.x > s.x &&
+        this.x < s.x + s.radius &&
+        this.y >= s.y + s.radius + s.vy &&
+        this.y <= s.y &&
+        anti == true
+      ) {
+        console.log("hi");
+        this.y = s.y + s.radius;
       }
     });
     game[counter].obstacles.forEach((obstacle) => {
