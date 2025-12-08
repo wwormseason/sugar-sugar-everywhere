@@ -603,12 +603,18 @@ function draw() {
     drawEndScreen();
     return; // stop the game
   }
-
+  if (game[counter].sugar.length > 0 && counter > 0) {
+    let total = game[counter].cups.length * 100;
+    let filled = 0;
+    game[counter].cups.forEach((cup) => {
+      filled += cup.filledAmount;
+    });
+    sugarFallingSound.setVolume(filled / total);
+  }
   if (!win) {
     if (game[counter].sugar.length > 0) {
       if (!sugarFallingSound.isPlaying()) {
         sugarFallingSound.loop();
-        sugarFallingSound.setVolume(0.1);
       }
     }
   } else {
