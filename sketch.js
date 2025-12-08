@@ -1,4 +1,4 @@
-let counter = 4;
+let counter = 0;
 let win = false;
 let gravity;
 let anti = false;
@@ -41,7 +41,7 @@ class Sugar {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vx = random(-0.25, 0.25);
+    this.vx = random(-0.5, 0.5);
     this.vy = 0.05;
     this.radius = 2;
     this.inCup = false;
@@ -56,25 +56,25 @@ class Sugar {
     //bottom to top
     if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
-      this.vy = 0.1;
+      this.vy = 0.05;
     }
 
     // top to bottom
     if (this.y < 0 - this.radius - this.vy) {
       this.y = 0;
-      this.vx = 0.1;
+      this.vy = 0.05;
     }
 
     //Right to left
     if (this.x > 1535 + this.radius + this.vx) {
       this.x = 0 - this.radius;
-      this.vy = 0.1;
+      this.vy = 0.2;
     }
 
     //left to right
     if (this.x < 0 - this.radius - this.vx) {
       this.x = 1535 + this.radius;
-      this.vy = 0.1;
+      this.vy = 0.2;
     }
 
     // Line collision handling
@@ -595,7 +595,7 @@ function setup() {
   sugarFallingSound.setVolume(0.2);
   sugarhitCup.setVolume(0.3);
 
-  gravity = createVector(0, 0.05);
+  gravity = createVector(0, 0.1);
 }
 
 function draw() {
@@ -608,6 +608,7 @@ function draw() {
     if (game[counter].sugar.length > 0) {
       if (!sugarFallingSound.isPlaying()) {
         sugarFallingSound.loop();
+        sugarFallingSound.setVolume(0.1);
       }
     }
   } else {
