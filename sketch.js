@@ -41,7 +41,7 @@ class Sugar {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vx = random(-0.1, 0.1);
+    this.vx = random(-0.25, 0.25);
     this.vy = 0.05;
     this.radius = 2;
     this.inCup = false;
@@ -56,25 +56,25 @@ class Sugar {
     //bottom to top
     if (this.y > height + this.radius + this.vy) {
       this.y = 0 - this.radius;
-      this.vy = 0.05;
+      this.vy = 0.1;
     }
 
     // top to bottom
     if (this.y < 0 - this.radius - this.vy) {
       this.y = 0;
-      this.vx = 0.05;
+      this.vx = 0.1;
     }
 
     //Right to left
     if (this.x > 1535 + this.radius + this.vx) {
       this.x = 0 - this.radius;
-      this.vy = 0.05;
+      this.vy = 0.1;
     }
 
     //left to right
     if (this.x < 0 - this.radius - this.vx) {
       this.x = 1535 + this.radius;
-      this.vy = 0.05;
+      this.vy = 0.1;
     }
 
     // Line collision handling
@@ -114,7 +114,7 @@ class Sugar {
 
         // push sugar out of the line
         this.x -= nx * (this.radius - distToLine);
-        this.y -= ny * (this.radius - distToLine) * 2;
+        this.y -= ny * (this.radius - distToLine);
 
         // Velocity → project onto tangent (sliding)
         let dot = this.vx * dx + this.vy * dy;
@@ -126,25 +126,34 @@ class Sugar {
         this.vy += dy * gravity.y * 0.5;
       }
     }
-
+    game[counter].sugar.forEach((s) => {
+      if (
+        this.x > s.x &&
+        this.x < s.x + s.radius &&
+        this.y > s.y &&
+        this.y < s.y + s.radius + s.vy
+      ) {
+        this.y = s.y - s.radius;
+      }
+    });
     game[counter].obstacles.forEach((obstacle) => {
       if (
         this.x > obstacle.x &&
         this.x < obstacle.x + obstacle.width &&
         this.y > obstacle.y - this.radius &&
-        this.y < obstacle.y + obstacle.height + this.vy
+        this.y < obstacle.y + this.vy + this.radius
       ) {
         this.y = obstacle.y - this.radius;
-        this.vx = 0.1;
+        this.vx = 0;
       }
       if (
         this.x > obstacle.x &&
         this.x < obstacle.x + obstacle.width &&
         this.y <= obstacle.y + obstacle.height - this.vy &&
-        this.y >= obstacle.y + obstacle.height + this.vy
+        this.y >= obstacle.y + this.vy
       ) {
         console.log("bottom");
-        this.y = obstacle.y + obstacle.height;
+        this.y = obstacle.y + obstacle.height + this.radius;
         //this.vy = -this.vy;
       }
     });
@@ -155,7 +164,7 @@ class Sugar {
           this.x > cup.x &&
           this.x < cup.x + 30 &&
           this.y > cup.y &&
-          this.y < cup.y + 20
+          this.y < cup.y + 20 + this.vy
         ) {
           cup.fill();
           this.inCup = true;
@@ -169,7 +178,7 @@ class Sugar {
           this.x > cup.x &&
           this.x < cup.x + 30 &&
           this.y > cup.y + 40 &&
-          this.y < cup.y + 60
+          this.y < cup.y + 60 + this.vy
         ) {
           cup.fill();
           this.inCup = true;
@@ -180,71 +189,177 @@ class Sugar {
         }
       }
     });
+
     if (counter == 0) {
       // O in our
-      if (this.x > 360 && this.x < 380 && this.y > 40 && this.y < 70) {
+      if (
+        this.x > 360 &&
+        this.x < 380 &&
+        this.y > 40 &&
+        this.y < 70 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // ur in Our
-      } else if (this.x > 380 && this.x < 420 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 380 &&
+        this.x < 420 &&
+        this.y > 45 &&
+        this.y < 70 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // K in Knockoff
-      } else if (this.x > 445 && this.x < 470 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 445 &&
+        this.x < 470 &&
+        this.y > 40 &&
+        this.y < 70 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // noc in Knockoff
-      } else if (this.x > 470 && this.x < 530 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 470 &&
+        this.x < 530 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // k in Knockoff
-      } else if (this.x > 530 && this.x < 550 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 530 &&
+        this.x < 550 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // o in Knockoff
-      } else if (this.x > 550 && this.x < 575 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 550 &&
+        this.x < 575 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // ff in Knockoff
-      } else if (this.x > 575 && this.x < 615 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 575 &&
+        this.x < 615 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // o in of
-      } else if (this.x > 640 && this.x < 660 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 640 &&
+        this.x < 660 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // f in of
-      } else if (this.x > 660 && this.x < 680 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 660 &&
+        this.x < 680 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // S in Sugar
-      } else if (this.x > 700 && this.x < 720 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 700 &&
+        this.x < 720 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // ugar in Sugar
-      } else if (this.x > 720 && this.x < 800 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 720 &&
+        this.x < 800 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // S in Sugar (2)
-      } else if (this.x > 830 && this.x < 850 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 830 &&
+        this.x < 850 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // ugar in Sugar (2)
-      } else if (this.x > 850 && this.x < 940 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 850 &&
+        this.x < 940 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // E in Everywhere
-      } else if (this.x > 955 && this.x < 980 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 955 &&
+        this.x < 980 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // veryw in Everywhere
-      } else if (this.x > 980 && this.x < 1085 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 980 &&
+        this.x < 1085 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // h in Everywhere
-      } else if (this.x > 1085 && this.x < 1095 && this.y > 40 && this.y < 70) {
+      } else if (
+        this.x > 1085 &&
+        this.x < 1095 &&
+        this.y > 40 &&
+        this.y < 45 + this.vy
+      ) {
         this.y = 40 - this.radius;
         // here in Everywhere
-      } else if (this.x > 1095 && this.x < 1175 && this.y > 45 && this.y < 70) {
+      } else if (
+        this.x > 1095 &&
+        this.x < 1175 &&
+        this.y > 45 &&
+        this.y < 50 + this.vy
+      ) {
         this.y = 45 - this.radius;
         // St in Start
-      } else if (this.x > 710 && this.x < 745 && this.y > 590 && this.y < 620) {
+      } else if (
+        this.x > 710 &&
+        this.x < 745 &&
+        this.y > 590 &&
+        this.y < 620 + this.vy
+      ) {
         this.y = 590 - this.radius;
         // tart in Start
-      } else if (this.x > 745 && this.x < 800 && this.y > 595 && this.y < 620) {
+      } else if (
+        this.x > 745 &&
+        this.x < 800 &&
+        this.y > 595 &&
+        this.y < 620 + this.vy
+      ) {
         this.y = 595 - this.radius;
         // t in Start
-      } else if (this.x > 800 && this.x < 810 && this.y > 590 && this.y < 620) {
+      } else if (
+        this.x > 800 &&
+        this.x < 810 &&
+        this.y > 590 &&
+        this.y < 620 + this.vy
+      ) {
         this.y = 590 - this.radius;
       }
     } else {
       // reset button
-      if (this.x > 1400 && this.x < 1450 && this.y > 95 && this.y < 150) {
+      if (
+        this.x > 1400 &&
+        this.x < 1450 &&
+        this.y > 95 &&
+        this.y < 150 + this.vy
+      ) {
         this.y = 95 - this.radius;
       }
       if (counter > 3) {
