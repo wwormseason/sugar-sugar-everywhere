@@ -41,7 +41,7 @@ class Sugar {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vx = random(-0.5, 0.5);
+    this.vx = random(-0.25, 0.25);
     this.vy = 0.05;
     this.radius = 2;
     this.inCup = false;
@@ -68,13 +68,13 @@ class Sugar {
     //Right to left
     if (this.x > 1535 + this.radius + this.vx) {
       this.x = 0 - this.radius;
-      this.vy = 0.2;
+      this.vy = 0.05;
     }
 
     //left to right
     if (this.x < 0 - this.radius - this.vx) {
       this.x = 1535 + this.radius;
-      this.vy = 0.2;
+      this.vy = 0.05;
     }
 
     // Line collision handling
@@ -143,7 +143,7 @@ class Sugar {
         this.y <= s.y &&
         anti == true
       ) {
-        console.log("hi");
+        //console.log("hi");
         this.y = s.y + s.radius;
       }
     });
@@ -163,7 +163,7 @@ class Sugar {
         this.y <= obstacle.y + obstacle.height - this.vy &&
         this.y >= obstacle.y + this.vy
       ) {
-        console.log("bottom");
+        //console.log("bottom");
         this.y = obstacle.y + obstacle.height + this.radius;
         //this.vy = -this.vy;
       }
@@ -638,7 +638,7 @@ function draw() {
   });
 
   strokeWeight(0);
-  if (frameCount % 10 === 0) {
+  if (frameCount % 4 === 0) {
     game[counter].sugar.push(new Sugar(game[counter].sugarPosition, 0));
   }
 
