@@ -2,7 +2,7 @@ We have multiple classes, Cup, Sugar, and Obstacle to set properties and behavio
 
  ### Your(Kevin's) personal contribution to the project?
 
-#### I contributed the gravity parameters, the end screen, the various audio components, last two levels, flipping the cups,
+#### I contributed the gravity parameters, the end screen, the various audio components, last two levels, flipping the cups, I also helped on the physics for the lines
 ___
  ### Your experience working collaboratively?
 
