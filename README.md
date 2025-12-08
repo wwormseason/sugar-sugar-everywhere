@@ -1,3 +1,1 @@
-We have multiple classes, Cup, Sugar, and Obstacle to set properties and behaviors for the three main elements of our game. A key function is the update function in the Sugar class. It controls collision with obstacles, checks for if sugar has fallen into the cup, and animates the sugar movement. It does this by changing the sugar's position based on its velocity parameters. It also checks for boundaries of the cups and obstacles, so the sugar doesn't phase through. Currently, we're focusing on allowing the sugar to have collision when interacting with player drawn lines. Our current code allows for lines to be drawn, but the sugar bounces off the lines and behaves erratically.
-Steven
-I helped make the line collision for the sugar added the win logic for multiple cups and made the 3rd level.
+
