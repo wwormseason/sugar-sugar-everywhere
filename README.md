@@ -1,14 +1,14 @@
-#### Ideation:
+### Ideation:
 
 We were unsure of what to make for the project, but we had decided we wanted to make a game of some sort. I, Yifan, started suggesting some old Flash games I used to play. I ended up suggesting Sugar, Sugar. Steven and Kevin fell in love with the idea and that's how we settled on our project.
 
-#### Collaboration:
+### Collaboration:
 
 We tried to split responsiblities by asking each team member what part of the project they wanted to do and allowing them to take it. The remaining bits were then split evenly. We each had our own GitHub branched where we made changes. Those changes would be pull requeted for the whole team to check before being integrated onto main.
 
-#### Coding & Development & Technical Highlights:
+### Coding & Development & Technical Highlights:
 
-###### Yifan:
+#### Yifan:
 
 I'm used to working on a coding project with many members due to my high school experience, so I didn't have much trouble. I coded all of the classes and collision. At one point, the code got rally long and hard to read, so I reformatted how we checked for levels. I made 1 really long game object that holds the specific level data for each level and we call the level through an incremented variable. This was inspiried by how the screens were implemented in the text based adventure game.
 
@@ -18,7 +18,7 @@ One of the big challenges that came with coding collision was accounting for the
 
 My 5 million if statements that check for collision ended up looking horrible and I absolutely missed something, but I'm glad it works at all.
 
-###### Kevin:
+#### Kevin:
 
 I contributed the gravity parameters, the end screen, the various audio components, last two levels, flipping the cups, I also helped on the physics for the lines.
 
@@ -36,6 +36,6 @@ The third problem was the audio, sometimes the sound wouldn't play, it would pla
 
 The final problem I had was with the endscreen/winscreen, I had to create a new functionn and variable so that A. the function could be called and switch to the screen & B. It would only switch after the player finished level 5. Often times, it wouldn't switch and just stayed on the level complete screen on level 5. Solving this involved moving the way I was calling the function to the top of draw so it could be checked first.
 
-###### Steven:
+#### Steven:
 
 I helped make the line collision for the sugar added the win logic for multiple cups and made the 3rd level.
