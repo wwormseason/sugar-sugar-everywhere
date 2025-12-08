@@ -114,7 +114,7 @@ class Sugar {
 
         // push sugar out of the line
         this.x -= nx * (this.radius - distToLine);
-        this.y -= ny * (this.radius - distToLine) * 2 ;
+        this.y -= ny * (this.radius - distToLine) * 2;
 
         // Velocity → project onto tangent (sliding)
         let dot = this.vx * dx + this.vy * dy;
@@ -318,7 +318,10 @@ let game = {
   },
   4: {
     cups: [new Cup(100, 767.5, 30, true)],
-    obstacles: [new Obstacle(383.75, 740, 600, 20)],
+    obstacles: [
+      new Obstacle(383.75, 740, 600, 20),
+      new Obstacle(740, 10, 100, 20),
+    ],
     lines: [],
     sugar: [],
     sugarPosition: 200,
@@ -330,13 +333,14 @@ let game = {
     //Amount, x, y, flipped?
     cups: [
       new Cup(100, 910, 590),
-      new Cup(100, 910, 10, true),
+      new Cup(100, 910, 0, true),
       new Cup(100, 500, 490, true),
     ],
     obstacles: [
       //x,y, width , height
       new Obstacle(130, 640, 140, 20),
       new Obstacle(700, 630, 400, 20),
+      new Obstacle(400, 470, 200, 20),
     ],
     lines: [],
     sugar: [],
@@ -466,7 +470,6 @@ function setup() {
   sugarhitCup.setVolume(0.3);
 
   gravity = createVector(0, 0.05);
-
 }
 
 function draw() {
@@ -583,7 +586,7 @@ function draw() {
   }
   if (counter > 3) {
     fill(game[counter].fgColor);
-    rect(45, 70, 70, 60);;
+    rect(45, 70, 70, 60);
     fill("black");
     text(anti ? "Unflip\nGravity" : "Flip\nGravity", 80, 100);
   }
@@ -618,7 +621,6 @@ function draw() {
     });
     fill(game[counter].bgColor);
   }
-  
 
   //text(`${pmouseX}, ${pmouseY}`, 100, 100);
 }
