@@ -4,7 +4,7 @@ We were unsure of what to make for the project, but we had decided we wanted to 
 ### Collaboration:
 We tried to split responsibilities by asking each team member what part of the project they wanted to do and allowing them to take it. The remaining bits were then split evenly. We each had our own GitHub branches where we made changes. Those changes would be pull requests for the whole team to check before being integrated onto main.
 
-Coding & Development & Technical Highlights:
+### Coding & Development & Technical Highlights:
 #### Yifan:
 I'm used to working on a coding project with many members due to my high school experience, so I didn't have much trouble. I coded all of the classes and collision. At one point, the code got really long and hard to read, so I reformatted how we checked for levels. I made 1 really long game object that holds the specific level data for each level and we call the level through an incremented variable. This was inspired by how the screens were implemented in the text based adventure game.
 
